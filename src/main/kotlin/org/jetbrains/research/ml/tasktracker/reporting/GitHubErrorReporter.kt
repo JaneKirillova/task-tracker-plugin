@@ -1,9 +1,10 @@
 package org.jetbrains.research.ml.tasktracker.reporting
 
+import com.intellij.diagnostic.DiagnosticBundle
 import com.intellij.diagnostic.IdeaReportingEvent
-import com.intellij.diagnostic.ReportMessages
 import com.intellij.ide.DataManager
 import com.intellij.idea.IdeaLogger
+import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -21,8 +22,10 @@ import java.awt.Component
 
 class GitHubErrorReporter : ErrorReportSubmitter() {
     override fun submit(
-        events: Array<IdeaLoggingEvent>, additionalInfo: String?, parentComponent: Component,
-        consumer: Consumer<SubmittedReportInfo>
+        events: Array<out IdeaLoggingEvent>,
+        additionalInfo: String?,
+        parentComponent: Component,
+        consumer: Consumer<in SubmittedReportInfo>
     ): Boolean {
         val errorReportInformation = ErrorInformation(
             IdeaLogger.ourLastActionId,
@@ -46,7 +49,7 @@ class GitHubErrorReporter : ErrorReportSubmitter() {
      * Provides functionality to show an error report message to the user that gives a clickable link to the created issue.
      */
     internal class CallbackWithNotification(
-        private val originalConsumer: Consumer<SubmittedReportInfo>,
+        private val originalConsumer: Consumer<in SubmittedReportInfo>,
         private val project: Project?
     ) :
         Consumer<SubmittedReportInfo> {
@@ -58,8 +61,9 @@ class GitHubErrorReporter : ErrorReportSubmitter() {
                 } else {
                     NotificationType.INFORMATION
                 }
-            ReportMessages.GROUP.createNotification(
-                ReportMessages.ERROR_REPORT,
+
+            NotificationGroupManager.getInstance().getNotificationGroup("Error Report").createNotification(
+                DiagnosticBundle.message("error.list.title"),
                 reportInfo.linkText,
                 notificationType,
                 NotificationListener.URL_OPENING_LISTENER
@@ -71,7 +75,7 @@ class GitHubErrorReporter : ErrorReportSubmitter() {
     private fun doSubmit(
         event: IdeaLoggingEvent,
         parentComponent: Component,
-        callback: Consumer<SubmittedReportInfo>,
+        callback: Consumer<in SubmittedReportInfo>,
         errorInformation: ErrorInformation
     ): Boolean {
 
