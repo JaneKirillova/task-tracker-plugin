@@ -2,9 +2,11 @@ package org.jetbrains.research.ml.tasktracker.models
 
 import kotlinx.serialization.Serializable
 
+@Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable
 data class Example(val input: String, val output: String)
 
+@Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable
 data class TaskInfo(
     val name: String,
@@ -13,6 +15,7 @@ data class TaskInfo(
     val output: String
 )
 
+@Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable
 data class Task(
     override val key: String,

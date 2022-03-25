@@ -2,6 +2,7 @@ package org.jetbrains.research.ml.tasktracker.models
 
 import kotlinx.serialization.Serializable
 
+@Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable
 data class SurveyPaneText(
     val age: String,
@@ -14,6 +15,7 @@ data class SurveyPaneText(
     val programmingLanguage: String
 )
 
+@Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable
 data class FinalPaneText(
     val praise: String,
@@ -22,6 +24,7 @@ data class FinalPaneText(
     val backToTasks: String
 )
 
+@Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable
 data class TaskChoosingPaneText(
     val chooseTask: String,
@@ -30,6 +33,7 @@ data class TaskChoosingPaneText(
     val description: String
 )
 
+@Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable
 data class TaskSolvingPaneText(
     val inputData: String,
@@ -39,12 +43,14 @@ data class TaskSolvingPaneText(
     val hint: String
 )
 
+@Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable
 data class SuccessPaneText(
     val backToTasks: String,
     val successMessage: String
 )
 
+@Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable
 data class PaneText(
     val surveyPane: Map<PaneLanguage, SurveyPaneText>,
