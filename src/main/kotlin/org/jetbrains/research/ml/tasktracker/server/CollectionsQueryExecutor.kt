@@ -1,9 +1,8 @@
 package org.jetbrains.research.ml.tasktracker.server
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import okhttp3.Request
 import okhttp3.Response
 import java.net.URL
@@ -11,7 +10,7 @@ import java.net.URL
 object CollectionsQueryExecutor : QueryExecutor() {
 
     fun <T> getCollection(url: String, serializer: KSerializer<T>): List<T> {
-        return parseResponse(getResponse(url), serializer) { it.list }
+        return parseResponse(getResponse(url), serializer) { ListSerializer(it) }
     }
 
     fun <T> getItemFromCollection(url: String, serializer: KSerializer<T>): T {
@@ -24,7 +23,16 @@ object CollectionsQueryExecutor : QueryExecutor() {
         transform: (KSerializer<T>) -> KSerializer<R>
     ): R {
         if (response.isSuccessful()) {
-            return Json(JsonConfiguration.Stable).parse(transform(serializer), response?.body?.string() ?: "")
+            val json = Json {
+                allowStructuredMapKeys = true
+                ignoreUnknownKeys = true
+            }
+            val responseJson = response?.body?.string() ?: ""
+
+            return json.decodeFromString(
+                transform(serializer),
+                responseJson
+            )
         }
         throw IllegalStateException("Unsuccessful server response")
     }
