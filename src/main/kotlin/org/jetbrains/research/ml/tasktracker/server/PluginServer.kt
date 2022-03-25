@@ -90,7 +90,8 @@ object PluginServer {
      */
     private fun safeReceive(receive: () -> Unit) {
         logger.info("${Plugin.PLUGIN_NAME} PluginServer safeReceive, current thread is ${Thread.currentThread().name}")
-        val publisher = ApplicationManager.getApplication().messageBus.syncPublisher(ServerConnectionNotifier.SERVER_CONNECTION_TOPIC)
+        val publisher =
+            ApplicationManager.getApplication().messageBus.syncPublisher(ServerConnectionNotifier.SERVER_CONNECTION_TOPIC)
         serverConnectionResult = ServerConnectionResult.LOADING
         publisher.accept(serverConnectionResult)
 
@@ -143,7 +144,10 @@ object PluginServer {
     }
 
     private fun receiveTaskSolvingErrorDialogText(): TaskSolvingErrorDialogText {
-        return CollectionsQueryExecutor.getItemFromCollection("dialog-text/task_solving_error", TaskSolvingErrorDialogText.serializer())
+        return CollectionsQueryExecutor.getItemFromCollection(
+            "dialog-text/task_solving_error",
+            TaskSolvingErrorDialogText.serializer()
+        )
     }
 
 
@@ -151,7 +155,7 @@ object PluginServer {
         ApplicationManager.getApplication().invokeAndWait {
             val document = TaskFileHandler.getDocument(project, task)
             ProgressManager.getInstance().run(
-                object : Backgroundable(project,"Sending task ${task.key} solution", false) {
+                object : Backgroundable(project, "Sending task ${task.key} solution", false) {
                     override fun run(indicator: ProgressIndicator) {
                         sendFileByDocument(document)
                     }
