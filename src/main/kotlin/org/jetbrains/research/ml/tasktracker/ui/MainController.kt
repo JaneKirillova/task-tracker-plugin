@@ -7,6 +7,7 @@ import com.intellij.ui.components.JBScrollPane
 import javafx.application.Platform
 import org.jetbrains.research.ml.tasktracker.Plugin
 import org.jetbrains.research.ml.tasktracker.server.*
+import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
 import org.jetbrains.research.ml.tasktracker.ui.panes.*
 import org.jetbrains.research.ml.tasktracker.ui.panes.util.PaneController
 import org.jetbrains.research.ml.tasktracker.ui.panes.util.PaneControllerManager
@@ -71,14 +72,22 @@ internal object MainController {
                             showingPane.updatePanel(javaClass.getResource("/ui/PassportPane.html").readText())
                             showingPane.executeJavascript(
                                 """
+                                    var nextButton = document.getElementById('next-button');
+                                    nextButton.onclick = function () {
                                     var elements = document.querySelectorAll('.question:checked');
                                     var selectedVariants = Array.from(elements).map(element => element.value).join(',');
-                                    alert(selectedVariants)
-                                    var myButton = document.getElementById('next-button');
-                                    myButton.onclick = function () {
                                     """, """}""", "selectedVariants"
                             ) {
                                 println(it)
+                                null
+                            }
+                            showingPane.executeJavascript(
+                                """
+                                    var goButton = document.getElementById('go-button');
+                                    goButton.onclick = function () {
+                            """, """}""", "goButton"
+                            ) {
+                                TaskFileHandler.openTaskFiles(PluginServer.tasks.first())
                                 null
                             }
                         }
