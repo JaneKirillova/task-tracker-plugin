@@ -12,7 +12,6 @@ import org.jetbrains.research.ml.tasktracker.ui.panes.util.PaneController
 import org.jetbrains.research.ml.tasktracker.ui.panes.util.PaneControllerManager
 import org.jetbrains.research.ml.tasktracker.ui.panes.util.Updatable
 import org.jetbrains.research.ml.tasktracker.ui.panes.util.subscribe
-import java.awt.Toolkit
 import javax.swing.JComponent
 import javax.swing.JPanel
 
@@ -20,12 +19,11 @@ import javax.swing.JPanel
 typealias Pane = PaneControllerManager<out PaneController>
 
 internal object MainController {
-    //    Todo: move to Scalable in future
-    private const val SCREEN_HEIGHT = 1080.0
 
     private val logger: Logger = Logger.getInstance(javaClass)
     private val contents: MutableList<Content> = arrayListOf()
-
+    private val showingPane = ShowingPanel()
+    private lateinit var project: Project
     private val panes: List<Pane> = arrayListOf(
         ErrorControllerManager,
         LoadingControllerManager,
@@ -50,16 +48,39 @@ internal object MainController {
                 logger.info("${Plugin.PLUGIN_NAME} MainController, server connection topic $connection, current thread is ${Thread.currentThread().name}")
                 ApplicationManager.getApplication().invokeLater {
                     logger.info("${Plugin.PLUGIN_NAME} MainController, server connection topic $connection in application block, current thread is ${Thread.currentThread().name}")
-                    visiblePane = when (connection) {
-                        ServerConnectionResult.UNINITIALIZED -> LoadingControllerManager
-                        ServerConnectionResult.LOADING -> LoadingControllerManager
+                    when (connection) {
+                        ServerConnectionResult.UNINITIALIZED -> {
+                            showingPane.updatePanel(javaClass.getResource("/ui/LoadingPane.html").readText())
+                        }
+                        ServerConnectionResult.LOADING -> {
+                            showingPane.updatePanel(javaClass.getResource("/ui/LoadingPane.html").readText())
+                        }
                         ServerConnectionResult.FAIL -> {
-                            ErrorControllerManager.setRefreshAction { PluginServer.reconnect(it) }
-                            ErrorControllerManager
+                            showingPane.updatePanel(javaClass.getResource("/ui/ErrorPane.html").readText())
+                            showingPane.executeJavascript(
+                                """                 
+                                 var myButton = document.getElementById('refresh-button');
+                                 myButton.onclick = function () {
+                                 """, """}"""
+                            ) {
+                                PluginServer.reconnect(project)
+                                null
+                            }
                         }
                         ServerConnectionResult.SUCCESS -> {
-                            contents.forEach { it.updatePanesToCreate() }
-                            SurveyControllerManager
+                            showingPane.updatePanel(javaClass.getResource("/ui/PassportPane.html").readText())
+                            showingPane.executeJavascript(
+                                """
+                                    var elements = document.querySelectorAll('.question:checked');
+                                    var selectedVariants = Array.from(elements).map(element => element.value).join(',');
+                                    alert(selectedVariants)
+                                    var myButton = document.getElementById('next-button');
+                                    myButton.onclick = function () {
+                                    """, """}""", "selectedVariants"
+                            ) {
+                                println(it)
+                                null
+                            }
                         }
                     }
                 }
@@ -74,7 +95,7 @@ internal object MainController {
                         DataSendingResult.FAIL -> {
                             val currentTask = TaskChoosingUiData.chosenTask.currentValue
 //                            Todo: what pane to show if task is null? ErrorController with outdated refresh action?
-                            currentTask?.let {task ->
+                            currentTask?.let { task ->
                                 ErrorControllerManager.setRefreshAction { PluginServer.sendDataForTask(task, it) }
                             }
                             ErrorControllerManager
@@ -89,13 +110,8 @@ internal object MainController {
     /*   RUN ON EDT (ToolWindowFactory takes care of it) */
     fun createContent(project: Project): JComponent {
         logger.info("${Plugin.PLUGIN_NAME} MainController create content, current thread is ${Thread.currentThread().name}")
-        val screenSize = Toolkit.getDefaultToolkit().screenSize
-        val scale = screenSize.height / SCREEN_HEIGHT
-        val panel = JPanel()
-        panel.background = java.awt.Color.WHITE
-        ApplicationManager.getApplication().invokeLater {
-            contents.add(Content(panel, project, scale, panes))
-        }
+        val panel = showingPane
+        this@MainController.project = project
         PluginServer.checkItInitialized(project)
         return JBScrollPane(panel)
     }
@@ -104,7 +120,12 @@ internal object MainController {
      * Represents ui content that needs to be created. It contains [panel] to which all [panesToCreateContent] should
      * add their contents.
      */
-    data class Content(val panel: JPanel, val project: Project, val scale: Double, var panesToCreateContent: List<Pane>) {
+    data class Content(
+        val panel: JPanel,
+        val project: Project,
+        val scale: Double,
+        var panesToCreateContent: List<Pane>
+    ) {
         init {
             logger.info("${Plugin.PLUGIN_NAME} Content init, current thread is ${Thread.currentThread().name}")
             updatePanesToCreate()
