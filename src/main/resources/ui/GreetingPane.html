@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Greeting</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var submitButton = document.getElementById("submit-button");
+            submitButton.onclick = function () {
+                var checked = document.getElementById('agreement').checked;
+                if (!checked) {
+                    alert("Please select checkbox to submit.");
+                    return false;
+                }
+                var nameField = document.getElementById('nameField').value
+                if (nameField === "") {
+                    alert("Please fill the Name")
+                    return false
+                }
+                var emailField = document.getElementById('emailField').value
+                if (emailField === "") {
+                    alert("Please fill the Email")
+                    return false
+                }
+            }
+        });
+    </script>
+    <style>
+        body {
+            padding: 15px;
+            width: 60%;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <h2>Greetings from JetBrains!</h2>
+    <h3>Thank you for your interest and participation in our research!</h3>
+    <p> It consists of two steps:</p>
+
+    <ul>
+        <li>a 5-minutes survey about difficulties you may experience in your everyday life;</li>
+        <li>a 20-minutes step with several programming tasks in Python language to solve.</li>
+    </ul>
+    <p> We kindly ask you to read and submit the following consent to proceed with the research:
+        <a href="https://docs.google.com/document/d/1NT-dxzes6CaE68zEtJcHAdXTphMnRNEmDxIx6SVfHiI/edit#" target="_blank">
+            “TEXT OF THE CONSENT”</a>
+    </p>
+    <div style="text-align: center">
+        <input style="margin-bottom:15px;" type="checkbox" name="agreement" id="agreement"/>
+        <label style="margin-bottom:15px;" for="agreement">I agree</label><br>
+        <input style="margin-bottom:10px;" type="text" name="name" id="nameField" placeholder="Name"><br>
+        <input style="margin-bottom:10px;" type="email" name="email" id="emailField" placeholder="Email"><br>
+        <button id="submit-button">Submit</button>
+    </div>
+</div>
+</body>
+</html>
