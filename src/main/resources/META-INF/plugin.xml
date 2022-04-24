@@ -16,13 +16,22 @@
 
 
     <depends>com.intellij.modules.platform</depends>
-<!--    <depends>Activity Tracker</depends>-->
+    <!--    <depends>Activity Tracker</depends>-->
 
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="org.jetbrains.research.ml.tasktracker.InitActivity"/>
-        <toolWindow id="tasktracker" anchor="right" factoryClass="org.jetbrains.research.ml.tasktracker.ui.PluginToolWindowFactory"/>
+        <toolWindow id="tasktracker" anchor="right"
+                    factoryClass="org.jetbrains.research.ml.tasktracker.ui.PluginToolWindowFactory"/>
         <errorHandler implementation="org.jetbrains.research.ml.tasktracker.reporting.GitHubErrorReporter"/>
         <writingAccessProvider implementation="org.jetbrains.research.ml.tasktracker.tracking.PluginAccessProvider"/>
     </extensions>
-
+    <actions>
+        <group id="TaskTracker.Controller" text="TackTracker" description="TaskTracker controller">
+            <action id="org.jetbrains.research.ml.tasktracker.services.NextButtonAction"
+                    class="org.jetbrains.research.ml.tasktracker.services.NextButtonAction" text="Next Task"
+                    description="Get next task from TaskTracker">
+            </action>
+            <add-to-group group-id="MainMenu" anchor="last"/>
+        </group>
+    </actions>
 </idea-plugin>
