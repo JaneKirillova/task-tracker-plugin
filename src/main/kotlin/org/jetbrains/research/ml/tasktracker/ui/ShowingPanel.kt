@@ -26,6 +26,7 @@ class ShowingPanel : SimpleToolWindowPanel(true, true),
         val jsQueryGetSelectedProjects = JBCefJSQuery.create(jbCefBrowser)
         jsQueryGetSelectedProjects.addHandler(action)
         val cefBrowser = jbCefBrowser.cefBrowser
+        //TODO javascript faster than html loading
         Thread.sleep(1000)
         jbCefBrowser.cefBrowser.executeJavaScript(
             (codeBeforeInject + """
