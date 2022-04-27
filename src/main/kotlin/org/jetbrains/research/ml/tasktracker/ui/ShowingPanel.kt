@@ -1,19 +1,33 @@
 package org.jetbrains.research.ml.tasktracker.ui
 
-import com.intellij.openapi.Disposable
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefClient
 import com.intellij.ui.jcef.JBCefJSQuery
+import org.cef.CefApp
+import org.jetbrains.research.ml.tasktracker.ui.util.CustomSchemeHandlerFactory
 
-class ShowingPanel : SimpleToolWindowPanel(true, true),
-    Disposable {
+class ShowingPanel(project: Project) : SimpleToolWindowPanel(true, true) {
 
     private val jbCefBrowser: JBCefBrowser = JBCefBrowser()
 
     init {
+        registerAppSchemeHandler()
+        Disposer.register(project, jbCefBrowser)
         setContent(jbCefBrowser.component)
         jbCefBrowser.jbCefClient.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, 10)
+    }
+
+    private fun registerAppSchemeHandler() {
+        CefApp
+            .getInstance()
+            .registerSchemeHandlerFactory(
+                "http",
+                "tasktracker",
+                CustomSchemeHandlerFactory()
+            )
     }
 
 
@@ -31,15 +45,11 @@ class ShowingPanel : SimpleToolWindowPanel(true, true),
         jbCefBrowser.cefBrowser.executeJavaScript(
             (codeBeforeInject + """
                         ${jsQueryGetSelectedProjects.inject(queryResult)};
-                    """+codeAfterInject).trimIndent(), cefBrowser.url, 0
+                    """ + codeAfterInject).trimIndent(), cefBrowser.url, 0
         )
     }
 
-    fun updatePanel(html: String) {
-        jbCefBrowser.loadHTML(html)
-    }
-
-    override fun dispose() {
-        jbCefBrowser.dispose()
+    fun updatePanel(url: String) {
+        jbCefBrowser.loadURL(url)
     }
 }
