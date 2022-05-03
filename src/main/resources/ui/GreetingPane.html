@@ -1,30 +1,28 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Greeting</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script>
-        $(document).ready(function () {
-            var submitButton = document.getElementById("submit-button");
-            submitButton.onclick = function () {
-                var checked = document.getElementById('agreement').checked;
-                if (!checked) {
-                    alert("Please select checkbox to submit.");
-                    return false;
-                }
-                var nameField = document.getElementById('nameField').value
-                if (nameField === "") {
-                    alert("Please fill the Name")
-                    return false
-                }
-                var emailField = document.getElementById('emailField').value
-                if (emailField === "") {
-                    alert("Please fill the Email")
-                    return false
-                }
+        function checkInputFields() {
+            var checked = document.getElementById('agreement').checked;
+            if (!checked) {
+                alert("Please select checkbox to submit.");
+                return false;
             }
-        });
+            var nameField = document.getElementById('nameField').value
+            if (nameField === "") {
+                alert("Incorrect Name")
+                return false
+            }
+            var validEmailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+            var emailField = document.getElementById('emailField').value
+            if (!emailField.match(validEmailRegex)) {
+                alert("Incorrect Email")
+                return false
+            }
+            return true
+        }
     </script>
     <style>
         body {
