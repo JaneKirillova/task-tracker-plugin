@@ -6,6 +6,8 @@ import org.jetbrains.research.ml.tasktracker.ui.MainController
 
 class NextButtonAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        MainController.taskController.startSolvingNextTask()
+        getEventProject(e)?.let {
+            MainController.taskController.startSolvingNextTask(it)
+        }
     }
 }
