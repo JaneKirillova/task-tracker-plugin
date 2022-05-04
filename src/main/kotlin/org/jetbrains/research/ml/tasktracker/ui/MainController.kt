@@ -21,9 +21,7 @@ typealias Pane = PaneControllerManager<out PaneController>
 internal object MainController {
 
     private val logger: Logger = Logger.getInstance(javaClass)
-    private val _browserViews = mutableListOf<BrowserView>()
-    val browserViews: List<BrowserView>
-        get() = _browserViews
+    val browserViews = mutableListOf<BrowserView>()
 
     val taskController by lazy {
         TaskSolvingControllerr(PluginServer.tasks.iterator())
@@ -32,8 +30,6 @@ internal object MainController {
     val loadingViewController = LoadingViewController()
     val errorViewController = ErrorViewController()
     val successViewController = SuccessViewController()
-    private val currentState
-        get() = successViewController.currentState
     val panes: List<Pane> = arrayListOf(
         ErrorControllerManager,
         LoadingControllerManager,
@@ -60,17 +56,17 @@ internal object MainController {
                     logger.info("${Plugin.PLUGIN_NAME} MainController, server connection topic $connection in application block, current thread is ${Thread.currentThread().name}")
                     when (connection) {
                         ServerConnectionResult.UNINITIALIZED -> {
-                            _browserViews.forEach { view ->
+                            browserViews.forEach { view ->
                                 loadingViewController.updateViewContent(view)
                             }
                         }
                         ServerConnectionResult.LOADING -> {
-                            _browserViews.forEach { view ->
+                            browserViews.forEach { view ->
                                 loadingViewController.updateViewContent(view)
                             }
                         }
                         ServerConnectionResult.FAIL -> {
-                            _browserViews.forEach { view ->
+                            browserViews.forEach { view ->
                                 errorViewController.updateViewContent(view)
                                 errorViewController.setOnRefreshAction(view) {
                                     PluginServer.reconnect(view.project)
@@ -79,7 +75,9 @@ internal object MainController {
                             }
                         }
                         ServerConnectionResult.SUCCESS -> {
-                            _browserViews.forEach { view -> successViewController.updateViewContent(view) }
+                            browserViews.forEach { view ->
+                                successViewController.updateViewContent(view)
+                            }
                         }
                     }
                 }
@@ -111,9 +109,12 @@ internal object MainController {
     /*   RUN ON EDT (ToolWindowFactory takes care of it) */
     fun createContent(project: Project): JComponent {
         logger.info("${Plugin.PLUGIN_NAME} MainController create content, current thread is ${Thread.currentThread().name}")
-        val createdView = BrowserView(project)
-        _browserViews.add(createdView)
         PluginServer.checkItInitialized(project)
+
+        val createdView = BrowserView(project)
+        successViewController.updateViewContent(createdView)
+        browserViews.add(createdView)
+
         return JBScrollPane(createdView)
     }
 }
