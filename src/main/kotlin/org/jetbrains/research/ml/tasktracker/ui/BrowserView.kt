@@ -12,12 +12,10 @@ import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandler
 import org.cef.handler.CefLoadHandlerAdapter
-import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
 import org.jetbrains.research.ml.tasktracker.ui.util.CustomSchemeHandlerFactory
 
 class BrowserView(val project: Project) : SimpleToolWindowPanel(true, true) {
 
-    var currentState = ViewState.GREETING
     private var currentCefLoadHandler: CefLoadHandler? = null
     private val jbCefBrowser: JBCefBrowser = JBCefBrowser()
 
