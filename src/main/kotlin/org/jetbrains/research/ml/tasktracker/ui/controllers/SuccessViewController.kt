@@ -1,17 +1,20 @@
 package org.jetbrains.research.ml.tasktracker.ui.controllers
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.research.ml.tasktracker.models.UserData
 import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
 import org.jetbrains.research.ml.tasktracker.ui.BrowserView
 import org.jetbrains.research.ml.tasktracker.ui.MainController
 
+
 class SuccessViewController : ViewControllerInterface {
-    //TODO add to logger?
+    private val logger: Logger = Logger.getInstance(javaClass)
     private val userData = UserData()
     var currentState = ViewState.GREETING
 
     override fun updateViewContent(view: BrowserView) {
+        logger.info("View loaded with $currentState state")
         when (currentState) {
             ViewState.GREETING -> {
                 view.updateViewByUrl("http://tasktracker/GreetingPane.html")
@@ -91,7 +94,7 @@ class SuccessViewController : ViewControllerInterface {
         ) {
             val listOfUserAnswers = it.split(',').map { answer -> answer.toInt() }
             userData.listOfAnswers += listOfUserAnswers
-            println(userData)
+            logger.info("Received $userData from user")
             ApplicationManager.getApplication().invokeLater {
                 TaskFileHandler.initProject(view.project)
                 MainController.taskController.startSolvingNextTask(view.project)
