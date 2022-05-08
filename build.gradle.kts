@@ -5,15 +5,15 @@ fun properties(key: String) = project.findProperty(key).toString()
 
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.4.0"
+    id("org.jetbrains.intellij") version "1.5.3"
 
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("jvm") version "1.6.20"
+    kotlin("plugin.serialization") version "1.6.20"
 
-    id("com.github.johnrengelman.shadow") version "5.1.0"
-    id("org.openjfx.javafxplugin") version "0.0.12"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("org.openjfx.javafxplugin") version "0.0.13"
     id("com.gluonhq.client-gradle-plugin") version "0.1.42"
-    id("org.jetbrains.dokka") version "1.6.10"
+    id("org.jetbrains.dokka") version "1.6.20"
 }
 
 group = properties("pluginGroup")
