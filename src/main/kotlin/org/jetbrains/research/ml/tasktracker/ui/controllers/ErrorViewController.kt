@@ -5,7 +5,7 @@ import org.jetbrains.research.ml.tasktracker.ui.BrowserView
 
 class ErrorViewController : ViewControllerInterface {
     override fun updateViewContent(view: BrowserView) {
-        view.updateViewByUrl("http://tasktracker/ErrorPane.html")
+        view.updateViewByUrl("http://tasktracker/ErrorPage.html")
     }
 
     fun setOnRefreshAction(view: BrowserView, action: (String) -> JBCefJSQuery.Response?) {
