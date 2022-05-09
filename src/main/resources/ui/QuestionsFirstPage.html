@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Questions: part I</title>
+    <script>
+        function checkSurvey() {
+            var elements = document.querySelectorAll('.question:checked');
+            if (elements.length !== 10) {
+                alert("Please complete all questions");
+                return false;
+            }
+            return true
+        }
+    </script>
     <style>
         body {
             width: 60%;
@@ -94,14 +104,14 @@
         <tr>
             <td style="text-align: left">9. Unable to inhibit my reactions or responses to events or others</td>
             <td><input type="radio" class="question" name="choose-button-9" value="1">1</td>
-            <td><input type="radio" class="question" name="choose-button-9" value="2" checked>2</td>
+            <td><input type="radio" class="question" name="choose-button-9" value="2">2</td>
             <td><input type="radio" class="question" name="choose-button-9" value="3">3</td>
             <td><input type="radio" class="question" name="choose-button-9" value="4">4</td>
         </tr>
         <tr>
             <td style="text-align: left">10. Make impulsive comments to others</td>
             <td><input type="radio" class="question" name="choose-button-10" value="1">1</td>
-            <td><input type="radio" class="question" name="choose-button-10" value="2" checked>2</td>
+            <td><input type="radio" class="question" name="choose-button-10" value="2">2</td>
             <td><input type="radio" class="question" name="choose-button-10" value="3">3</td>
             <td><input type="radio" class="question" name="choose-button-10" value="4">4</td>
         </tr>

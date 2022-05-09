@@ -28,8 +28,12 @@ class SuccessViewController : ViewControllerInterface {
                 view.updateViewByUrl("http://tasktracker/QuestionsSecondPage.html")
                 setQuestionsSecondAction(view)
             }
+            ViewState.PRE_TASK_SOLVING -> {
+                view.updateViewByUrl("http://tasktracker/PreSolvingPage.html")
+                setPreSolvingAction(view)
+            }
             ViewState.TASK_SOLVING -> {
-                view.updateViewByUrl("http://tasktracker/TaskSolvingPage.html")
+                view.updateViewByUrl("http://tasktracker/SolvingPage.html")
             }
             ViewState.FEEDBACK -> {
                 view.updateViewByUrl("http://tasktracker/FeedbackPage.html")
@@ -46,7 +50,7 @@ class SuccessViewController : ViewControllerInterface {
             """
                             var submitButton = document.getElementById('submit-button');
                             submitButton.onclick = function () {
-                            if(checkInputFields()){
+                            if (checkInputFields()) {
                             var nameField = document.getElementById('nameField').value;
                             var emailField = document.getElementById('emailField').value;
                             var userInfo = [nameField, emailField].join(',');
@@ -69,9 +73,10 @@ class SuccessViewController : ViewControllerInterface {
             """
                             var nextButton = document.getElementById('next-button');
                             nextButton.onclick = function () {
+                            if (checkSurvey()) {
                             var elements = document.querySelectorAll('.question:checked');
                             var selectedVariants = Array.from(elements).map(element => element.value).join(',');
-            """, """}""", "selectedVariants"
+            """, """}}""", "selectedVariants"
         ) {
             val listOfUserAnswers = it.split(',').map { answer -> answer.toInt() }
             userData.listOfAnswers += listOfUserAnswers
@@ -86,20 +91,36 @@ class SuccessViewController : ViewControllerInterface {
     private fun setQuestionsSecondAction(view: BrowserView) {
         view.executeJavascript(
             """
-                            var goButton = document.getElementById('go-button');
-                            goButton.onclick = function () {
+                            var nextButton = document.getElementById('next-button');
+                            nextButton.onclick = function () {
+                            if (checkSurvey()) {
                             var elements = document.querySelectorAll('.question:checked');
                             var selectedVariants = Array.from(elements).map(element => element.value).join(',');
-            """, """}""", "selectedVariants"
+            """, """}}""", "selectedVariants"
         ) {
             val listOfUserAnswers = it.split(',').map { answer -> answer.toInt() }
             userData.listOfAnswers += listOfUserAnswers
             logger.info("Received $userData from user")
+            currentState = ViewState.PRE_TASK_SOLVING
+            MainController.browserViews.forEach { viewFromController ->
+                updateViewContent(viewFromController)
+            }
+            null
+        }
+    }
+
+    private fun setPreSolvingAction(view: BrowserView) {
+        view.executeJavascript(
+            """
+                            var goButton = document.getElementById('go-button');
+                            goButton.onclick = function () {
+            """, """}"""
+        ) {
+            currentState = ViewState.TASK_SOLVING
             ApplicationManager.getApplication().invokeLater {
                 TaskFileHandler.initProject(view.project)
                 MainController.taskController.startSolvingNextTask(view.project)
             }
-            currentState = ViewState.TASK_SOLVING
             MainController.browserViews.forEach { viewFromController ->
                 updateViewContent(viewFromController)
             }
