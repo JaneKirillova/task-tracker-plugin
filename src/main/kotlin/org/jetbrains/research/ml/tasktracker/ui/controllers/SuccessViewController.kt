@@ -17,26 +17,26 @@ class SuccessViewController : ViewControllerInterface {
         logger.info("View loaded with $currentState state")
         when (currentState) {
             ViewState.GREETING -> {
-                view.updateViewByUrl("http://tasktracker/GreetingPane.html")
+                view.updateViewByUrl("http://tasktracker/GreetingPage.html")
                 setGreetingAction(view)
             }
             ViewState.QUESTIONS_FIRST -> {
-                view.updateViewByUrl("http://tasktracker/QuestionsFirstPane.html")
+                view.updateViewByUrl("http://tasktracker/QuestionsFirstPage.html")
                 setQuestionsFirstAction(view)
             }
             ViewState.QUESTIONS_SECOND -> {
-                view.updateViewByUrl("http://tasktracker/QuestionsSecondPane.html")
+                view.updateViewByUrl("http://tasktracker/QuestionsSecondPage.html")
                 setQuestionsSecondAction(view)
             }
             ViewState.TASK_SOLVING -> {
-                view.updateViewByUrl("http://tasktracker/TaskSolvingPane.html")
+                view.updateViewByUrl("http://tasktracker/TaskSolvingPage.html")
             }
             ViewState.FEEDBACK -> {
-                view.updateViewByUrl("http://tasktracker/FeedbackPane.html")
+                view.updateViewByUrl("http://tasktracker/FeedbackPage.html")
                 setFeedbackAction(view)
             }
             ViewState.FINAL -> {
-                view.updateViewByUrl("http://tasktracker/FinalPane.html")
+                view.updateViewByUrl("http://tasktracker/FinalPage.html")
             }
         }
     }
