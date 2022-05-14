@@ -1,5 +1,6 @@
 package org.jetbrains.research.ml.tasktracker.ui
 
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -20,7 +21,11 @@ class TaskSolvingControllerr(private val taskIterator: Iterator<Task>) {
             currentTask?.let {
                 PluginServer.sendDataForTask(it, project)
                 //TaskFileHandler.closeTaskFiles(it)
+            } ?: run {
+                val action = ActionManager.getInstance().getAction("HideAllWindows")
+                ActionManager.getInstance().tryToExecute(action, null, null, null, true)
             }
+
             if (taskIterator.hasNext()) {
                 currentTask = taskIterator.next()
                 logger.info("Start solving $currentTask")
@@ -28,6 +33,9 @@ class TaskSolvingControllerr(private val taskIterator: Iterator<Task>) {
             } else {
                 //TODO at last task
                 logger.info("Solution Completed. Start uploading solutions.")
+                val action = ActionManager.getInstance().getAction("HideAllWindows")
+                ActionManager.getInstance().tryToExecute(action, null, null, null, true)
+
                 MainController.successViewController.currentState = ViewState.FEEDBACK
                 MainController.browserViews.forEach {
                     MainController.successViewController.updateViewContent(it)
