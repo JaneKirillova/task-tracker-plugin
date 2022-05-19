@@ -9,14 +9,9 @@ import org.jetbrains.research.ml.tasktracker.server.*
 import org.jetbrains.research.ml.tasktracker.ui.controllers.ErrorViewController
 import org.jetbrains.research.ml.tasktracker.ui.controllers.LoadingViewController
 import org.jetbrains.research.ml.tasktracker.ui.controllers.SuccessViewController
-import org.jetbrains.research.ml.tasktracker.ui.panes.*
-import org.jetbrains.research.ml.tasktracker.ui.panes.util.PaneController
-import org.jetbrains.research.ml.tasktracker.ui.panes.util.PaneControllerManager
 import org.jetbrains.research.ml.tasktracker.ui.panes.util.subscribe
 import javax.swing.JComponent
 
-
-typealias Pane = PaneControllerManager<out PaneController>
 
 internal object MainController {
 
@@ -30,22 +25,6 @@ internal object MainController {
     val loadingViewController = LoadingViewController()
     val errorViewController = ErrorViewController()
     val successViewController = SuccessViewController()
-    val panes: List<Pane> = arrayListOf(
-        ErrorControllerManager,
-        LoadingControllerManager,
-        SurveyControllerManager,
-        TaskChoosingControllerManager,
-        TaskSolvingControllerManager,
-        FinalControllerManager,
-        SuccessControllerManager
-    )
-
-    internal var visiblePane: Pane? = LoadingControllerManager
-        set(value) {
-            logger.info("${Plugin.PLUGIN_NAME} $value set visible, current thread is ${Thread.currentThread().name}")
-            panes.forEach { it.setVisible(it == value) }
-            field = value
-        }
 
     init {
         /* Subscribes to notifications about server connection result to update visible view */
@@ -87,7 +66,7 @@ internal object MainController {
         subscribe(DataSendingNotifier.DATA_SENDING_TOPIC, object : DataSendingNotifier {
             override fun accept(result: DataSendingResult) {
                 ApplicationManager.getApplication().invokeLater {
-                    visiblePane = when (result) {
+                    /*visiblePane = when (result) {
                         DataSendingResult.LOADING -> LoadingControllerManager
                         DataSendingResult.FAIL -> {
                             val currentTask = TaskChoosingUiData.chosenTask.currentValue
@@ -100,7 +79,7 @@ internal object MainController {
 
 
                         DataSendingResult.SUCCESS -> SuccessControllerManager
-                    }
+                    }*/
                 }
             }
         })
