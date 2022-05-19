@@ -73,7 +73,10 @@ class HtmlGenerator {
                         br { text("Please, proceed with the survey.") }
                         br { text("How often do you experience each of these problems?") }
                         br { text("1- Never or rarely; 2 - Sometimes; 3 - Often; 4 - Very often.") }
-                        br { text("   Please mark the number next to each item that best describes your behavior <b>during the past 6 months") }
+                        br {
+                            text("Please mark the number next to each item that best describes your behavior")
+                            b { text(" during the past 6 months") }
+                        }
                     }
                 }
             }
