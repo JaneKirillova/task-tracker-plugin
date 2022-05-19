@@ -4,8 +4,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import org.jetbrains.research.ml.tasktracker.Plugin
 import org.jetbrains.research.ml.tasktracker.server.TrackerQueryExecutor
-import org.jetbrains.research.ml.tasktracker.ui.panes.SurveyUiData
-import org.jetbrains.research.ml.tasktracker.ui.panes.TaskChoosingUiData
+import org.jetbrains.research.ml.tasktracker.ui.MainController
 import org.joda.time.DateTime
 
 data class LoggedDataGetter<T, S>(val header: String, val getData: (T) -> S)
@@ -22,24 +21,16 @@ abstract class LoggedData<T, S> {
 }
 
 enum class UiLoggedDataHeader(val header: String) {
-    AGE("age"),
-    GENDER("gender"),
-    PROGRAM_EXPERIENCE_YEARS("programExperienceYears"),
-    PROGRAM_EXPERIENCE_MONTHS("programExperienceMonths"),
-    COUNTRY("country"),
-    CHOSEN_TASK("chosenTask"),
-    PROGRAMMING_LANGUAGE("programmingLanguage")
+    Name("name"),
+    Email("email"),
+    Answers("answers"),
 }
 
 object UiLoggedData : LoggedData<Unit, String>() {
     override val loggedDataGetters: List<LoggedDataGetter<Unit, String>> = arrayListOf(
-        LoggedDataGetter(UiLoggedDataHeader.AGE.header) { SurveyUiData.age.uiValue.toString() },
-        LoggedDataGetter(UiLoggedDataHeader.GENDER.header) { SurveyUiData.gender.toString() },
-        LoggedDataGetter(UiLoggedDataHeader.PROGRAM_EXPERIENCE_YEARS.header) { SurveyUiData.peYears.uiValue.toString() },
-        LoggedDataGetter(UiLoggedDataHeader.PROGRAM_EXPERIENCE_MONTHS.header) { SurveyUiData.peMonths.uiValue.toString() },
-        LoggedDataGetter(UiLoggedDataHeader.COUNTRY.header) {SurveyUiData.country.toString() },
-        LoggedDataGetter(UiLoggedDataHeader.CHOSEN_TASK.header) { TaskChoosingUiData.chosenTask.toString() },
-        LoggedDataGetter(UiLoggedDataHeader.PROGRAMMING_LANGUAGE.header) { SurveyUiData.programmingLanguage.toString() }
+        LoggedDataGetter(UiLoggedDataHeader.Name.header) { MainController.successViewController.userData.name.toString() },
+        LoggedDataGetter(UiLoggedDataHeader.Email.header) { MainController.successViewController.userData.email.toString() },
+        LoggedDataGetter(UiLoggedDataHeader.Answers.header) { MainController.successViewController.userData.listOfAnswers.toString() },
     )
 }
 
