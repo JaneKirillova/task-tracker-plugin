@@ -1,25 +1,18 @@
 package org.jetbrains.research.ml.tasktracker.models
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
 
 @Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable
-data class Example(val input: String, val output: String)
-
-@Suppress("PROVIDED_RUNTIME_TOO_LOW")
-@Serializable
-data class TaskInfo(
-    val name: String,
-    val description: String,
-    val input: String,
-    val output: String
-)
+data class Settings(val actionsToToggle: List<String>, val parameters: Map<String, String>)
 
 @Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable
 data class Task(
     override val key: String,
     val id: Int = -1,
-    val infoTranslation: Map<PaneLanguage, TaskInfo>,
-    val examples: List<Example> = emptyList()
+    val isExperimental: Boolean,
+    val description: JsonObject,
+    val ideSettings: Settings
 ) : Keyed
