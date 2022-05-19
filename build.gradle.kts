@@ -22,6 +22,7 @@ version = properties("pluginVersion")
 intellij {
     println("Using ide version: ${properties("platformVersion")}")
     version.set(properties("platformVersion"))
+    type.set("PY")
     pluginName.set(properties("pluginName"))
 }
 
@@ -30,6 +31,7 @@ repositories {
     maven(url = "https://jetbrains.bintray.com/intellij-third-party-dependencies")
     maven(url = "https://nexus.gluonhq.com/nexus/content/repositories/releases/")
     maven(url = "https://jitpack.io")
+    maven(url = "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
 
     mavenCentral()
     jcenter()
@@ -54,6 +56,9 @@ dependencies {
     // https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j (used for unzipping required plugins)
     implementation("net.lingala.zip4j", "zip4j", "2.9.1")
     implementation("com.github.holgerbrandl:krangl:0.17.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-html:0.7.5")
+    //Fix java.lang.ClassCastException: class org.apache.xerces.jaxp.DocumentBuilderFactoryImpl
+    implementation("xerces:xercesImpl:2.12.2")
 
     testImplementation("junit", "junit", "4.12")
 }
@@ -80,15 +85,6 @@ dependencies {
 intellij {
     version.set(properties("platformVersion"))
 }*/
-
-
-/*
-   Uncomment for testing with PyCharm IDE
-*/
-//intellij {
-//    version = "2019.2.3"
-//    type = "PY"
-//}
 
 javafx {
     version = "15"
