@@ -7,7 +7,7 @@
         function checkInputFields() {
             var checked = document.getElementById('agreement').checked;
             if (!checked) {
-                alert("Please select checkbox to submit.");
+                alert("Please select \"I agree to terms\" to submit.");
                 return false;
             }
             var nameField = document.getElementById('nameField').value
@@ -47,7 +47,7 @@
     </p>
     <div style="text-align: center">
         <input style="margin-bottom:15px;" type="checkbox" name="agreement" id="agreement"/>
-        <label style="margin-bottom:15px;" for="agreement">I agree</label><br>
+        <label style="margin-bottom:15px;" for="agreement">I agree to terms</label><br>
         <input style="margin-bottom:10px;" type="text" name="name" id="nameField" placeholder="Name"><br>
         <input style="margin-bottom:10px;" type="email" name="email" id="emailField" placeholder="Email"><br>
         <button id="submit-button">Submit</button>
