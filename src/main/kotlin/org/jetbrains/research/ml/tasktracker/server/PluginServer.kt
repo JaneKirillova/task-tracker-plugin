@@ -12,19 +12,16 @@ import org.jetbrains.research.ml.tasktracker.Plugin
 import org.jetbrains.research.ml.tasktracker.models.*
 import org.jetbrains.research.ml.tasktracker.tracking.DocumentLogger
 import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
+import org.jetbrains.research.ml.tasktracker.ui.MainController
+import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
 import java.util.function.Consumer
 
 enum class ServerConnectionResult {
-    UNINITIALIZED,
-    LOADING,
-    SUCCESS,
-    FAIL
+    UNINITIALIZED, LOADING, SUCCESS, FAIL
 }
 
 enum class DataSendingResult {
-    LOADING,
-    SUCCESS,
-    FAIL
+    LOADING, SUCCESS, FAIL
 }
 
 interface ServerConnectionNotifier : Consumer<ServerConnectionResult> {
@@ -66,10 +63,33 @@ object PluginServer {
 
     fun checkItInitialized(project: Project) {
         if (serverConnectionResult == ServerConnectionResult.UNINITIALIZED) {
-            reconnect(project)
+            when (MainController.successViewController.currentState) {
+                ViewState.GREETING -> {
+                    reconnect(project)
+                }
+                else -> {
+                    reconnectTasks(project)
+                }
+            }
         }
     }
 
+    /**
+     * Receives tasks in background task and sends results about receiving
+     */
+    fun reconnectTasks(project: Project) {
+        if (serverConnectionResult != ServerConnectionResult.LOADING) {
+            logger.info("${Plugin.PLUGIN_NAME} PluginServer getting reconnect tasks, current thread is ${Thread.currentThread().name}")
+            ProgressManager.getInstance().run(object : Backgroundable(project, "Getting tasks from server") {
+                override fun run(indicator: ProgressIndicator) {
+                    safeReceive {
+                        TrackerQueryExecutor.initUserId()
+                        tasks = receiveTasks()
+                    }
+                }
+            })
+        }
+    }
 
     /**
      * Receives all data in background task and sends results about receiving
@@ -107,7 +127,6 @@ object PluginServer {
     private fun receiveData() {
         paneText = receivePaneText()
         availableLanguages = receiveAvailableLanguages()
-        tasks = receiveTasks()
         genders = receiveGenders()
         countries = receiveCountries()
         taskSolvingErrorDialogText = receiveTaskSolvingErrorDialogText()
@@ -145,17 +164,42 @@ object PluginServer {
 
     private fun receiveTaskSolvingErrorDialogText(): TaskSolvingErrorDialogText {
         return CollectionsQueryExecutor.getItemFromCollection(
-            "dialog-text/task_solving_error",
-            TaskSolvingErrorDialogText.serializer()
+            "dialog-text/task_solving_error", TaskSolvingErrorDialogText.serializer()
         )
     }
 
 
+    fun sendFeedback(feedback: String?, project: Project) {
+        ApplicationManager.getApplication().invokeAndWait {
+            ProgressManager.getInstance().run(object : Backgroundable(project, "Sending feedback", false) {
+                override fun run(indicator: ProgressIndicator) {
+                    sendFeedbackByJson(feedback, TrackerQueryExecutor.userId)
+                }
+            })
+        }
+    }
+
+    private fun sendFeedbackByJson(feedback: String?, id: String?) {
+        if (dataSendingResult != DataSendingResult.LOADING) {
+            val publisher =
+                ApplicationManager.getApplication().messageBus.syncPublisher(DataSendingNotifier.DATA_SENDING_TOPIC)
+            dataSendingResult = DataSendingResult.LOADING
+            publisher.accept(dataSendingResult)
+            dataSendingResult = try {
+                TrackerQueryExecutor.sendFeedbackData(feedback, id)
+                DataSendingResult.SUCCESS
+            } catch (e: java.lang.IllegalStateException) {
+                DataSendingResult.FAIL
+            }
+            publisher.accept(dataSendingResult)
+        }
+    }
+
     fun sendDataForTask(task: Task, project: Project) {
         ApplicationManager.getApplication().invokeAndWait {
             val document = TaskFileHandler.getDocument(project, task)
-            ProgressManager.getInstance().run(
-                object : Backgroundable(project, "Sending task ${task.key} solution", false) {
+            ProgressManager.getInstance()
+                .run(object : Backgroundable(project, "Sending task ${task.key} solution", false) {
                     override fun run(indicator: ProgressIndicator) {
                         sendFileByDocument(document)
                     }

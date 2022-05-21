@@ -10,7 +10,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.jetbrains.research.ml.tasktracker.Plugin
 import org.jetbrains.research.ml.tasktracker.models.Extension
 import org.jetbrains.research.ml.tasktracker.tracking.ActivityTrackerFileHandler
-import org.jetbrains.research.ml.tasktracker.tracking.StoredInfoWrapper
 import java.io.File
 import java.io.PrintWriter
 import java.net.URL
@@ -26,14 +25,7 @@ object TrackerQueryExecutor : QueryExecutor() {
 
     var userId: String? = null
 
-    init {
-        StoredInfoWrapper.info.userId?.let { userId = it } ?: run {
-            initUserId()
-            StoredInfoWrapper.updateStoredInfo(userId = userId)
-        }
-    }
-
-    private fun initUserId() {
+    fun initUserId() {
         val currentUrl = URL("${baseUrl}user")
         logger.info("${Plugin.PLUGIN_NAME}: ...generating user id")
         val requestBody = ByteArray(0).toRequestBody(null, 0, 0)
@@ -41,10 +33,15 @@ object TrackerQueryExecutor : QueryExecutor() {
         userId = executeQuery(request)?.let { it.body?.string() }
     }
 
+    private fun getRequestForFeedbackQuery(urlSuffix: String, feedback: String?, id: String?): Request {
+        val json = "{\"feedback\":\"$feedback\",\"id\":\"$id\"}"
+        val body = json.toRequestBody("application/json".toMediaTypeOrNull())
+        logger.info(body.toString())
+        return Request.Builder().url(baseUrl + urlSuffix).method("POST", body).build()
+    }
+
     private fun getRequestForUserQuery(
-        urlSuffix: String,
-        taskTrackerKey: String,
-        activityTrackerKey: String
+        urlSuffix: String, taskTrackerKey: String, activityTrackerKey: String
     ): Request {
         val json = "{\"diId\":$taskTrackerKey,\"atiId\":\"$activityTrackerKey\"}"
         val body = json.toRequestBody("application/json".toMediaTypeOrNull())
@@ -52,10 +49,7 @@ object TrackerQueryExecutor : QueryExecutor() {
     }
 
     private fun getRequestForSendingDataQuery(
-        urlSuffix: String,
-        file: File,
-        fileFieldName: String,
-        activityTrackerKey: String? = null
+        urlSuffix: String, file: File, fileFieldName: String, activityTrackerKey: String? = null
     ): Request {
         if (file.exists()) {
             logger.info("${Plugin.PLUGIN_NAME}: ...sending file ${file.name}")
@@ -90,9 +84,7 @@ object TrackerQueryExecutor : QueryExecutor() {
             ActivityTrackerFileHandler.filterActivityTrackerData(activityTrackerPath)?.let {
                 executeTrackerQuery(
                     getRequestForSendingDataQuery(
-                        "activity-tracker-item",
-                        File(it),
-                        ACTIVITY_TRACKER_FILE_FIELD
+                        "activity-tracker-item", File(it), ACTIVITY_TRACKER_FILE_FIELD
                     )
                 )
             }
@@ -105,8 +97,7 @@ object TrackerQueryExecutor : QueryExecutor() {
     private fun updateUserData(taskTrackerKey: String, activityTrackerKey: String) {
         executeTrackerQuery(
             getRequestForUserQuery(
-                "user/$userId",
-                taskTrackerKey, activityTrackerKey
+                "user/$userId", taskTrackerKey, activityTrackerKey
             )
         )
     }
@@ -118,12 +109,15 @@ object TrackerQueryExecutor : QueryExecutor() {
         writer.close()
     }
 
+    fun sendFeedbackData(feedback: String?, id: String?) {
+        executeTrackerQuery(getRequestForFeedbackQuery("feedback/", feedback, id))
+    }
 
     fun sendData(taskTrackerFiles: List<File>) {
         sendActivityTrackerData()?.let { activityTrackerKey ->
             sendTaskTrackerData(taskTrackerFiles, activityTrackerKey).forEach {
                 // Todo: should we send all successful responses??
-                it?.let{
+                it?.let {
                     updateUserData(it, activityTrackerKey)
                 } ?: error("Unsuccessful server response")
             }

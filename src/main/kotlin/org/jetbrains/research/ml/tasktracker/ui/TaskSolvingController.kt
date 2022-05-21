@@ -6,10 +6,11 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import org.jetbrains.research.ml.tasktracker.models.Task
+import org.jetbrains.research.ml.tasktracker.server.PluginServer
 import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
 import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
 
-class TaskSolvingControllerr(private val taskIterator: Iterator<Task>) {
+class TaskSolvingController(private val taskIterator: Iterator<Task>) {
     private val logger: Logger = Logger.getInstance(javaClass)
 
     private val storedIdeProperties = mutableMapOf<String, String>()
@@ -18,9 +19,6 @@ class TaskSolvingControllerr(private val taskIterator: Iterator<Task>) {
         private set
 
     fun startSolvingNextTask(project: Project) {
-        /*PluginServer.sendDataForTask(it, project)
-        TaskFileHandler.closeTaskFiles(it)*/
-
         if (taskIterator.hasNext()) {
             currentTask = taskIterator.next()
             logger.info("Start solving $currentTask")
@@ -48,10 +46,9 @@ class TaskSolvingControllerr(private val taskIterator: Iterator<Task>) {
                 }
             }
 
-        } else {
-            //TODO at last task
+        } else if (MainController.successViewController.currentState == ViewState.TASK_SOLVING) {
             logger.info("Solution Completed. Start uploading solutions.")
-
+            executeIdeAction("HideAllWindows")
             for ((key, value) in storedIdeProperties) {
                 PropertiesComponent.getInstance().setValue(key, value)
             }
@@ -62,7 +59,7 @@ class TaskSolvingControllerr(private val taskIterator: Iterator<Task>) {
                 }
             }
 
-            executeIdeAction("HideAllWindows")
+            sendTasks(project)
             MainController.successViewController.currentState = ViewState.FEEDBACK
             MainController.browserViews.forEach {
                 MainController.successViewController.updateViewContent(it)
@@ -70,14 +67,17 @@ class TaskSolvingControllerr(private val taskIterator: Iterator<Task>) {
         }
     }
 
-    private fun sendTasks() {
-
+    fun sendTasks(project: Project) {
+        PluginServer.tasks.forEach {
+            PluginServer.sendDataForTask(it, project)
+        }
     }
 
     fun executeIdeAction(actionId: String) {
         ApplicationManager.getApplication().invokeLater {
-            val action = ActionManager.getInstance().getAction(actionId)
-            ActionManager.getInstance().tryToExecute(action, null, null, null, true)
+            ActionManager.getInstance().getAction(actionId)?.let { action ->
+                ActionManager.getInstance().tryToExecute(action, null, null, null, true)
+            }
         }
     }
 }

@@ -117,7 +117,8 @@ class SuccessViewController {
         ) {
             val listOfUserAnswers = it.split(',').map { answer -> answer.toInt() }
             userData.listOfAnswers += listOfUserAnswers
-            logger.info("Received $userData from user")
+            logger.info("Received $userData")
+            PluginServer.reconnectTasks(currentView.project)
             currentState = ViewState.PRE_TASK_SOLVING
             MainController.browserViews.forEach { browserView ->
                 updateViewContent(browserView)
@@ -133,12 +134,12 @@ class SuccessViewController {
                             goButton.onclick = function () {
             """, """}"""
         ) {
-            currentState = ViewState.TASK_SOLVING
             ApplicationManager.getApplication().invokeLater {
                 TaskFileHandler.initProject(currentView.project)
             }
             MainController.taskController.executeIdeAction("HideAllWindows")
             MainController.taskController.startSolvingNextTask(currentView.project)
+            currentState = ViewState.TASK_SOLVING
             MainController.browserViews.forEach { browserView ->
                 updateViewContent(browserView)
             }
@@ -151,9 +152,12 @@ class SuccessViewController {
             """
                             var submitButton = document.getElementById('submit-button');
                             submitButton.onclick = function () {
-            """, """}"""
+                                var feedback = document.getElementById('tricksField');
+                                var feedbackText = feedback.value;
+            """, """}""", "feedbackText"
         ) {
-            //TODO TO DO!!!
+            userData.feedback = it
+            PluginServer.sendFeedback(userData.feedback, currentView.project)
             currentState = ViewState.FINAL
             MainController.browserViews.forEach { browserView ->
                 updateViewContent(browserView)

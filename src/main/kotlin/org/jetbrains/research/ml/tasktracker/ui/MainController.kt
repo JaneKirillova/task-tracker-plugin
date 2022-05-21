@@ -9,6 +9,7 @@ import org.jetbrains.research.ml.tasktracker.server.*
 import org.jetbrains.research.ml.tasktracker.ui.controllers.ErrorViewController
 import org.jetbrains.research.ml.tasktracker.ui.controllers.LoadingViewController
 import org.jetbrains.research.ml.tasktracker.ui.controllers.SuccessViewController
+import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
 import org.jetbrains.research.ml.tasktracker.ui.panes.util.subscribe
 import javax.swing.JComponent
 
@@ -19,7 +20,7 @@ internal object MainController {
     val browserViews = mutableListOf<BrowserView>()
 
     val taskController by lazy {
-        TaskSolvingControllerr(PluginServer.tasks.iterator())
+        TaskSolvingController(PluginServer.tasks.iterator())
     }
 
     val loadingViewController = LoadingViewController()
@@ -48,7 +49,14 @@ internal object MainController {
                             browserViews.forEach { view ->
                                 errorViewController.updateViewContent(view)
                                 errorViewController.setOnRefreshAction(view) {
-                                    PluginServer.reconnect(view.project)
+                                    when (successViewController.currentState) {
+                                        ViewState.GREETING -> {
+                                            PluginServer.reconnect(view.project)
+                                        }
+                                        else -> {
+                                            PluginServer.reconnectTasks(view.project)
+                                        }
+                                    }
                                     null
                                 }
                             }
@@ -66,20 +74,45 @@ internal object MainController {
         subscribe(DataSendingNotifier.DATA_SENDING_TOPIC, object : DataSendingNotifier {
             override fun accept(result: DataSendingResult) {
                 ApplicationManager.getApplication().invokeLater {
-                    /*visiblePane = when (result) {
-                        DataSendingResult.LOADING -> LoadingControllerManager
-                        DataSendingResult.FAIL -> {
-                            val currentTask = TaskChoosingUiData.chosenTask.currentValue
-//                            Todo: what pane to show if task is null? ErrorController with outdated refresh action?
-                            currentTask?.let { task ->
-                                ErrorControllerManager.setRefreshAction { PluginServer.sendDataForTask(task, it) }
+                    when (result) {
+                        DataSendingResult.LOADING -> {
+                            browserViews.forEach { view ->
+                                loadingViewController.updateViewContent(view)
                             }
-                            ErrorControllerManager
                         }
 
+                        DataSendingResult.FAIL -> {
+                            when (successViewController.currentState) {
+                                ViewState.FEEDBACK -> {
+                                    browserViews.forEach { view ->
+                                        errorViewController.updateViewContent(view)
+                                        errorViewController.setOnRefreshAction(view) {
+                                            PluginServer.sendFeedback(
+                                                successViewController.userData.feedback, view.project
+                                            )
+                                            null
+                                        }
+                                    }
+                                }
+                                else -> {
+                                    browserViews.forEach { view ->
+                                        errorViewController.updateViewContent(view)
+                                        errorViewController.setOnRefreshAction(view) {
+                                            logger.info("${Plugin.PLUGIN_NAME} on sending tasks connection failed. Try to resend")
+                                            taskController.sendTasks(view.project)
+                                            null
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
-                        DataSendingResult.SUCCESS -> SuccessControllerManager
-                    }*/
+                        DataSendingResult.SUCCESS -> {
+                            browserViews.forEach { view ->
+                                successViewController.updateViewContent(view)
+                            }
+                        }
+                    }
                 }
             }
         })
