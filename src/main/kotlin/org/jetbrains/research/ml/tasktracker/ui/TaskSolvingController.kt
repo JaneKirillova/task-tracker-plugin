@@ -10,20 +10,27 @@ import org.jetbrains.research.ml.tasktracker.server.PluginServer
 import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
 import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
 
-class TaskSolvingController(private val taskIterator: Iterator<Task>) {
+class TaskSolvingController(tasks: List<Task>) {
     private val logger: Logger = Logger.getInstance(javaClass)
 
     private val storedIdeProperties = mutableMapOf<String, String>()
     private val appliedActions = mutableMapOf<String, Int>()
-    var currentTask: Task? = null
+
+    private val taskIterator = tasks.iterator()
+    private val tasksToSendIterator = tasks.iterator()
+
+    private var currentSendingTask: Task? = null
+    private var projectWithTask: Project? = null
+
+    var currentSolvingTask: Task? = null
         private set
 
     fun startSolvingNextTask(project: Project) {
         if (taskIterator.hasNext()) {
-            currentTask = taskIterator.next()
-            logger.info("Start solving $currentTask")
+            currentSolvingTask = taskIterator.next()
+            logger.info("Start solving ${currentSolvingTask?.key}")
 
-            currentTask?.let {
+            currentSolvingTask?.let {
                 ApplicationManager.getApplication().invokeLater {
                     TaskFileHandler.openTaskFiles(it)
                 }
@@ -59,7 +66,8 @@ class TaskSolvingController(private val taskIterator: Iterator<Task>) {
                 }
             }
 
-            sendTasks(project)
+            projectWithTask = project
+            isAllTasksSentOrSendNext()
             MainController.successViewController.currentState = ViewState.FEEDBACK
             MainController.browserViews.forEach {
                 MainController.successViewController.updateViewContent(it)
@@ -67,10 +75,25 @@ class TaskSolvingController(private val taskIterator: Iterator<Task>) {
         }
     }
 
-    fun sendTasks(project: Project) {
-        PluginServer.tasks.forEach {
-            PluginServer.sendDataForTask(it, project)
+    fun resendLastTask() {
+        projectWithTask?.let { project ->
+            currentSendingTask?.let { task ->
+                PluginServer.sendDataForTask(task, project)
+            }
         }
+    }
+
+    fun isAllTasksSentOrSendNext(): Boolean {
+        if (tasksToSendIterator.hasNext()) {
+            currentSendingTask = tasksToSendIterator.next()
+            projectWithTask?.let { project ->
+                currentSendingTask?.let { task ->
+                    PluginServer.sendDataForTask(task, project)
+                }
+            }
+            return true
+        }
+        return false
     }
 
     fun executeIdeAction(actionId: String) {

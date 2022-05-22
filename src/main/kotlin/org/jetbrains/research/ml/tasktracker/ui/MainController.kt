@@ -20,7 +20,7 @@ internal object MainController {
     val browserViews = mutableListOf<BrowserView>()
 
     val taskController by lazy {
-        TaskSolvingController(PluginServer.tasks.iterator())
+        TaskSolvingController(PluginServer.tasks)
     }
 
     val loadingViewController = LoadingViewController()
@@ -100,7 +100,7 @@ internal object MainController {
                                         errorViewController.updateViewContent(view)
                                         errorViewController.setOnRefreshAction(view) {
                                             logger.info("${Plugin.PLUGIN_NAME} on sending tasks connection failed. Try to resend")
-                                            taskController.sendTasks(view.project)
+                                            taskController.resendLastTask()
                                             null
                                         }
                                     }
@@ -109,8 +109,8 @@ internal object MainController {
                         }
 
                         DataSendingResult.SUCCESS -> {
-                            browserViews.forEach { view ->
-                                successViewController.updateViewContent(view)
+                            if (!taskController.isAllTasksSentOrSendNext()) {
+                                browserViews.forEach { view -> successViewController.updateViewContent(view) }
                             }
                         }
                     }
