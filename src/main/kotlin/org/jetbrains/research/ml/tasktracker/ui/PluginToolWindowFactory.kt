@@ -6,6 +6,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import org.jetbrains.research.ml.tasktracker.Plugin
 import java.awt.*
+import java.util.*
 import javax.swing.*
 
 
@@ -21,20 +22,21 @@ class PluginToolWindowFactory : ToolWindowFactory {
         logger.info("${Plugin.PLUGIN_NAME}: creating tool window")
         val content = if (Plugin.checkRequiredPlugins()) {
             MainController.createContent(project)
-        } else  {
+        } else {
             createContentToRestart(project)
         }
         toolWindow.component.parent.add(content)
     }
 
 
-    private fun createContentToRestart(project: Project) : JComponent {
+    private fun createContentToRestart(project: Project): JComponent {
         val panel = JPanel(GridBagLayout())
         val gbc = GridBagConstraints()
         gbc.gridwidth = GridBagConstraints.REMAINDER
         gbc.insets = Insets(3, 3, 3, 3)
 
-        val label = JLabel("<html><b>${Plugin.PLUGIN_NAME.capitalize()}</b> installation is incomplete</html>")
+        val label =
+            JLabel("<html><b>${Plugin.PLUGIN_NAME.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}</b> installation is incomplete</html>")
         val button = JButton("Complete installation")
         button.addActionListener { Plugin.restartIde(project) }
         panel.add(label, gbc)
@@ -42,9 +44,3 @@ class PluginToolWindowFactory : ToolWindowFactory {
         return panel
     }
 }
-
-
-
-
-
-
