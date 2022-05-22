@@ -10,7 +10,7 @@ import org.jetbrains.research.ml.tasktracker.ui.controllers.ErrorViewController
 import org.jetbrains.research.ml.tasktracker.ui.controllers.LoadingViewController
 import org.jetbrains.research.ml.tasktracker.ui.controllers.SuccessViewController
 import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
-import org.jetbrains.research.ml.tasktracker.ui.panes.util.subscribe
+import org.jetbrains.research.ml.tasktracker.ui.util.subscribe
 import javax.swing.JComponent
 
 

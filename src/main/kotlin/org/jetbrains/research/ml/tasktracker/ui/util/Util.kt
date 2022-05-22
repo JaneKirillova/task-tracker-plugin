@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.tasktracker.ui.panes.util
+package org.jetbrains.research.ml.tasktracker.ui.util
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.util.messages.Topic
