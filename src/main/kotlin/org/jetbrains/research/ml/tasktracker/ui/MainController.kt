@@ -71,6 +71,7 @@ internal object MainController {
             }
         })
 
+        /* Subscribes to notifications about server sending result to update visible view */
         subscribe(DataSendingNotifier.DATA_SENDING_TOPIC, object : DataSendingNotifier {
             override fun accept(result: DataSendingResult) {
                 ApplicationManager.getApplication().invokeLater {
@@ -118,7 +119,6 @@ internal object MainController {
         })
     }
 
-    /*   RUN ON EDT (ToolWindowFactory takes care of it) */
     fun createContent(project: Project): JComponent {
         logger.info("${Plugin.PLUGIN_NAME} MainController create content, current thread is ${Thread.currentThread().name}")
         PluginServer.checkItInitialized(project)
