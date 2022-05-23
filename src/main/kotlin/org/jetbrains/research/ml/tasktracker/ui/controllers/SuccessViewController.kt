@@ -8,7 +8,7 @@ import org.jetbrains.research.ml.tasktracker.server.PluginServer
 import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
 import org.jetbrains.research.ml.tasktracker.ui.BrowserView
 import org.jetbrains.research.ml.tasktracker.ui.MainController
-import org.jetbrains.research.ml.tasktracker.ui.util.HtmlGenerator
+import org.jetbrains.research.ml.tasktracker.ui.util.getSurveyPage
 
 
 class SuccessViewController {
@@ -27,7 +27,7 @@ class SuccessViewController {
                 PluginServer.paneText?.let {
                     val listOfQuestions = it.surveyPane[PaneLanguage("en")]?.questions
                     view.updateViewByHtml(
-                        HtmlGenerator.getSurveyPage(
+                        getSurveyPage(
                             "Survey: first part", listOfQuestions?.subList(0, listOfQuestions.size / 2) ?: emptyList()
                         ), "http://tasktracker/QuestionsFirstPage.html"
                     )
@@ -38,7 +38,7 @@ class SuccessViewController {
                 PluginServer.paneText?.let {
                     val listOfQuestions = it.surveyPane[PaneLanguage("en")]?.questions
                     view.updateViewByHtml(
-                        HtmlGenerator.getSurveyPage(
+                        getSurveyPage(
                             "Survey: second part",
                             listOfQuestions?.subList(listOfQuestions.size / 2, listOfQuestions.size) ?: emptyList()
                         ), "http://tasktracker/QuestionsSecondPage.html"
@@ -118,7 +118,7 @@ class SuccessViewController {
             val listOfUserAnswers = it.split(',').map { answer -> answer.toInt() }
             userData.listOfAnswers += listOfUserAnswers
             logger.info("Received $userData")
-            PluginServer.reconnectTasks(currentView.project)
+            PluginServer.reconnectUserId(currentView.project)
             currentState = ViewState.PRE_TASK_SOLVING
             MainController.browserViews.forEach { browserView ->
                 updateViewContent(browserView)

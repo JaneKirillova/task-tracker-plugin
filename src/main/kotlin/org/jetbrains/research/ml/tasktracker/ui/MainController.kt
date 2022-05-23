@@ -54,7 +54,12 @@ internal object MainController {
                                             PluginServer.reconnect(view.project)
                                         }
                                         else -> {
-                                            PluginServer.reconnectTasks(view.project)
+                                            TrackerQueryExecutor.userId?.let {
+                                                PluginServer.reconnectTasks(view.project)
+                                            } ?: run {
+                                                PluginServer.lastProject = view.project
+                                                PluginServer.reconnectUserId(view.project)
+                                            }
                                         }
                                     }
                                     null
@@ -62,6 +67,11 @@ internal object MainController {
                             }
                         }
                         ServerConnectionResult.SUCCESS -> {
+                            TrackerQueryExecutor.userId?.let { id ->
+                                if (PluginServer.tasks.isEmpty()) {
+                                    PluginServer.lastProject?.let { PluginServer.reconnectTasks(it) }
+                                }
+                            }
                             browserViews.forEach { view ->
                                 successViewController.updateViewContent(view)
                             }
