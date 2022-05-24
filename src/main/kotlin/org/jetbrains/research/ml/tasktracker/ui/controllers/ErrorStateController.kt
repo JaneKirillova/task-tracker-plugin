@@ -3,7 +3,7 @@ package org.jetbrains.research.ml.tasktracker.ui.controllers
 import com.intellij.ui.jcef.JBCefJSQuery
 import org.jetbrains.research.ml.tasktracker.ui.BrowserView
 
-class ErrorViewController {
+class ErrorStateController {
     fun updateViewContent(view: BrowserView) {
         view.updateViewByUrl("http://tasktracker/ErrorPage.html")
     }

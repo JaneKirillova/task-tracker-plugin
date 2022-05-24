@@ -11,7 +11,7 @@ import org.jetbrains.research.ml.tasktracker.ui.MainController
 import org.jetbrains.research.ml.tasktracker.ui.util.getSurveyPage
 
 
-class SuccessViewController {
+class SuccessStateController {
     private val logger: Logger = Logger.getInstance(javaClass)
     val userData = UserData()
     var currentState = ViewState.GREETING
@@ -32,7 +32,7 @@ class SuccessViewController {
                         ), "http://tasktracker/QuestionsFirstPage.html"
                     )
                     setQuestionsFirstAction(view)
-                } ?: run { MainController.errorViewController.updateViewContent(view) }
+                } ?: run { MainController.errorStateController.updateViewContent(view) }
             }
             ViewState.QUESTIONS_SECOND -> {
                 PluginServer.paneText?.let {
@@ -44,7 +44,7 @@ class SuccessViewController {
                         ), "http://tasktracker/QuestionsSecondPage.html"
                     )
                     setQuestionsSecondAction(view)
-                } ?: run { MainController.errorViewController.updateViewContent(view) }
+                } ?: run { MainController.errorStateController.updateViewContent(view) }
             }
             ViewState.PRE_TASK_SOLVING -> {
                 view.updateViewByUrl("http://tasktracker/PreSolvingPage.html")
@@ -138,7 +138,7 @@ class SuccessViewController {
                 TaskFileHandler.initProject(currentView.project)
             }
             MainController.taskController.executeIdeAction("HideAllWindows")
-            MainController.taskController.startSolvingNextTask(currentView.project)
+            MainController.taskController.startNextTask(currentView.project)
             currentState = ViewState.TASK_SOLVING
             MainController.browserViews.forEach { browserView ->
                 updateViewContent(browserView)
