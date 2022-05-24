@@ -6,13 +6,13 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectLocator
 import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore.isEqualOrAncestor
@@ -24,10 +24,7 @@ import org.jetbrains.research.ml.tasktracker.models.Language
 import org.jetbrains.research.ml.tasktracker.models.Task
 import org.jetbrains.research.ml.tasktracker.server.PluginServer
 import org.jetbrains.research.ml.tasktracker.ui.MainController
-import org.jetbrains.research.ml.tasktracker.ui.panes.SurveyControllerManager
-import org.jetbrains.research.ml.tasktracker.ui.panes.SurveyUiData
-import org.jetbrains.research.ml.tasktracker.ui.panes.TaskChoosingUiData
-import org.jetbrains.research.ml.tasktracker.ui.panes.TaskSolvingControllerManager
+import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
 import java.io.File
 import java.io.IOException
 
@@ -49,11 +46,11 @@ object TaskFileHandler {
     /**
      * Call each time when user press startWorkingButton
      */
-    private fun initProject(project: Project) {
-        logger.info("Current chosen programming language is ${SurveyUiData.programmingLanguage.currentValue}")
+    fun initProject(project: Project) {
         projectToTaskToFiles[project] = hashMapOf()
         PluginServer.tasks.forEach { task ->
-            SurveyUiData.programmingLanguage.currentValue?.let {
+            ///TODO hardcoded jupyter((
+            Language.JUPYTER?.let {
                 val virtualFile = getOrCreateFile(project, task, it)
                 virtualFile?.let {
                     addTaskFile(it, task, project)
@@ -74,7 +71,7 @@ object TaskFileHandler {
             logger.info("Project $project is already added or set to be added")
             return
         }
-        if (MainController.visiblePane != SurveyControllerManager && SurveyUiData.programmingLanguage.currentValue != null) {
+        if (MainController.successStateController.currentState == ViewState.TASK_SOLVING) {
             initProject(project)
         } else {
             projectsToInit.add(project)
@@ -188,8 +185,7 @@ object TaskFileHandler {
      * File is writable if it's task is null or its task is currently chosen on the TaskSolvingPane
      */
     fun Task?.isItsFileWritable(): Boolean {
-        return (this == null || (this == TaskChoosingUiData.chosenTask.currentValue &&
-                MainController.visiblePane == TaskSolvingControllerManager))
+        return (this == null || this == MainController.taskController.currentSolvingTask)
     }
 
 
