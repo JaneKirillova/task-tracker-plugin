@@ -30,7 +30,7 @@ object TrackerQueryExecutor : QueryExecutor() {
         logger.info("${Plugin.PLUGIN_NAME}: ...generating user id")
         val requestBody = ByteArray(0).toRequestBody(null, 0, 0)
         val request = Request.Builder().url(currentUrl).post(requestBody).build()
-        userId = executeQuery(request)?.body?.string() ?: throw IllegalStateException("Unsuccessful server response")
+        userId = executeQuery(request)?.body?.string() ?: throw IllegalStateException("Incorrect server response")
 
     }
 
