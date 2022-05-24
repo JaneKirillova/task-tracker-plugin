@@ -14,6 +14,9 @@ import org.cef.handler.CefLoadHandler
 import org.cef.handler.CefLoadHandlerAdapter
 import org.jetbrains.research.ml.tasktracker.ui.util.CustomSchemeHandlerFactory
 
+/**
+ * Stores jbCefBrowser and project in which it was created
+ */
 class BrowserView(val project: Project) : SimpleToolWindowPanel(true, true) {
 
     private var currentCefLoadHandler: CefLoadHandler? = null
@@ -32,6 +35,9 @@ class BrowserView(val project: Project) : SimpleToolWindowPanel(true, true) {
         )
     }
 
+    /**
+     * Executes javascript at page after it is loaded
+     */
     fun executeJavascript(
         codeBeforeInject: String = "",
         codeAfterInject: String = "",
