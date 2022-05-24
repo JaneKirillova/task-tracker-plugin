@@ -28,9 +28,9 @@ enum class UiLoggedDataHeader(val header: String) {
 
 object UiLoggedData : LoggedData<Unit, String>() {
     override val loggedDataGetters: List<LoggedDataGetter<Unit, String>> = arrayListOf(
-        LoggedDataGetter(UiLoggedDataHeader.Name.header) { MainController.successViewController.userData.name.toString() },
-        LoggedDataGetter(UiLoggedDataHeader.Email.header) { MainController.successViewController.userData.email.toString() },
-        LoggedDataGetter(UiLoggedDataHeader.Answers.header) { MainController.successViewController.userData.listOfAnswers.toString() },
+        LoggedDataGetter(UiLoggedDataHeader.Name.header) { MainController.successStateController.userData.name.toString() },
+        LoggedDataGetter(UiLoggedDataHeader.Email.header) { MainController.successStateController.userData.email.toString() },
+        LoggedDataGetter(UiLoggedDataHeader.Answers.header) { MainController.successStateController.userData.listOfAnswers.toString() },
     )
 }
 
