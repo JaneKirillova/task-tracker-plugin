@@ -13,13 +13,12 @@ class TaskDocumentListener : DocumentListener {
     init {
         logger.info("${Plugin.PLUGIN_NAME}: init documents listener")
     }
-
     /**
      * Tracking documents changes before to be consistent with activity-tracker plugin
      */
     override fun beforeDocumentChange(event: DocumentEvent) {
-            if (isValidChange(event)) DocumentLogger.log(event.document)
-        }
+        if (isValidChange(event)) DocumentLogger.log(event.document)
+    }
 
     /**
      * To avoid completion events with IntellijIdeaRulezzz sign.
@@ -27,7 +26,7 @@ class TaskDocumentListener : DocumentListener {
      *  to add listeners anymore (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000664264-IntelliJ-DocumentListener-gives-an-internally-inconsistent-event-stream)
      */
     private fun isValidChange(event: DocumentEvent): Boolean {
-        return EditorFactory.getInstance().getEditors(event.document).isNotEmpty()
-                && FileDocumentManager.getInstance().getFile(event.document) != null
+        return EditorFactory.getInstance().getEditors(event.document).isNotEmpty() && FileDocumentManager.getInstance()
+            .getFile(event.document) != null
     }
 }
