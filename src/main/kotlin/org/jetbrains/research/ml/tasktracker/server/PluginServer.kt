@@ -60,16 +60,16 @@ object PluginServer {
     var serverConnectionResult: ServerConnectionResult = ServerConnectionResult.UNINITIALIZED
         private set
     private var dataSendingResult: DataSendingResult = DataSendingResult.SUCCESS
-    var lastProject: Project? = null
+    var lastSendingProject: Project? = null
 
     fun checkItInitialized(project: Project) {
         if (serverConnectionResult == ServerConnectionResult.UNINITIALIZED) {
-            when (MainController.successViewController.currentState) {
+            when (MainController.successStateController.currentState) {
                 ViewState.GREETING -> {
                     reconnect(project)
                 }
                 else -> {
-                    reconnectTasks(project)
+                    reconnectUserId(project)
                 }
             }
         }
@@ -92,17 +92,15 @@ object PluginServer {
     }
 
     /**
-     * Receives ID in background task and sends results about receiving
+     * Receives user ID in background task and sends results about receiving
      */
     fun reconnectUserId(project: Project) {
-        lastProject = project
+        lastSendingProject = project
         if (serverConnectionResult != ServerConnectionResult.LOADING) {
             logger.info("${Plugin.PLUGIN_NAME} PluginServer getting reconnect id, current thread is ${Thread.currentThread().name}")
             ProgressManager.getInstance().run(object : Backgroundable(project, "Getting ID from server") {
                 override fun run(indicator: ProgressIndicator) {
-                    safeReceive {
-                        TrackerQueryExecutor.initUserId()
-                    }
+                    safeReceive { TrackerQueryExecutor.initUserId() }
                 }
             })
         }

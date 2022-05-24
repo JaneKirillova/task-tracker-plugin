@@ -6,9 +6,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
 import org.jetbrains.research.ml.tasktracker.Plugin
 import org.jetbrains.research.ml.tasktracker.server.*
-import org.jetbrains.research.ml.tasktracker.ui.controllers.ErrorViewController
-import org.jetbrains.research.ml.tasktracker.ui.controllers.LoadingViewController
-import org.jetbrains.research.ml.tasktracker.ui.controllers.SuccessViewController
+import org.jetbrains.research.ml.tasktracker.ui.controllers.ErrorStateController
+import org.jetbrains.research.ml.tasktracker.ui.controllers.LoadingStateController
+import org.jetbrains.research.ml.tasktracker.ui.controllers.SuccessStateController
 import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
 import org.jetbrains.research.ml.tasktracker.ui.util.subscribe
 import javax.swing.JComponent
@@ -23,9 +23,9 @@ internal object MainController {
         TaskSolvingController(PluginServer.tasks)
     }
 
-    val loadingViewController = LoadingViewController()
-    val errorViewController = ErrorViewController()
-    val successViewController = SuccessViewController()
+    val loadingStateController = LoadingStateController()
+    val errorStateController = ErrorStateController()
+    val successStateController = SuccessStateController()
 
     init {
         /* Subscribes to notifications about server connection result to update visible view */
@@ -37,19 +37,19 @@ internal object MainController {
                     when (connection) {
                         ServerConnectionResult.UNINITIALIZED -> {
                             browserViews.forEach { view ->
-                                loadingViewController.updateViewContent(view)
+                                loadingStateController.updateViewContent(view)
                             }
                         }
                         ServerConnectionResult.LOADING -> {
                             browserViews.forEach { view ->
-                                loadingViewController.updateViewContent(view)
+                                loadingStateController.updateViewContent(view)
                             }
                         }
                         ServerConnectionResult.FAIL -> {
                             browserViews.forEach { view ->
-                                errorViewController.updateViewContent(view)
-                                errorViewController.setOnRefreshAction(view) {
-                                    when (successViewController.currentState) {
+                                errorStateController.updateViewContent(view)
+                                errorStateController.setOnRefreshAction(view) {
+                                    when (successStateController.currentState) {
                                         ViewState.GREETING -> {
                                             PluginServer.reconnect(view.project)
                                         }
@@ -57,7 +57,7 @@ internal object MainController {
                                             TrackerQueryExecutor.userId?.let {
                                                 PluginServer.reconnectTasks(view.project)
                                             } ?: run {
-                                                PluginServer.lastProject = view.project
+                                                PluginServer.lastSendingProject = view.project
                                                 PluginServer.reconnectUserId(view.project)
                                             }
                                         }
@@ -67,13 +67,14 @@ internal object MainController {
                             }
                         }
                         ServerConnectionResult.SUCCESS -> {
+                            //TODO: ugly way to getting tasks after Id has been received? May be one more subscriber?
                             TrackerQueryExecutor.userId?.let { id ->
                                 if (PluginServer.tasks.isEmpty()) {
-                                    PluginServer.lastProject?.let { PluginServer.reconnectTasks(it) }
+                                    PluginServer.lastSendingProject?.let { PluginServer.reconnectTasks(it) }
                                 }
                             }
                             browserViews.forEach { view ->
-                                successViewController.updateViewContent(view)
+                                successStateController.updateViewContent(view)
                             }
                         }
                     }
@@ -88,18 +89,18 @@ internal object MainController {
                     when (result) {
                         DataSendingResult.LOADING -> {
                             browserViews.forEach { view ->
-                                loadingViewController.updateViewContent(view)
+                                loadingStateController.updateViewContent(view)
                             }
                         }
 
                         DataSendingResult.FAIL -> {
-                            when (successViewController.currentState) {
+                            when (successStateController.currentState) {
                                 ViewState.FEEDBACK -> {
                                     browserViews.forEach { view ->
-                                        errorViewController.updateViewContent(view)
-                                        errorViewController.setOnRefreshAction(view) {
+                                        errorStateController.updateViewContent(view)
+                                        errorStateController.setOnRefreshAction(view) {
                                             PluginServer.sendFeedback(
-                                                successViewController.userData.feedback, view.project
+                                                successStateController.userData.feedback, view.project
                                             )
                                             null
                                         }
@@ -107,8 +108,8 @@ internal object MainController {
                                 }
                                 else -> {
                                     browserViews.forEach { view ->
-                                        errorViewController.updateViewContent(view)
-                                        errorViewController.setOnRefreshAction(view) {
+                                        errorStateController.updateViewContent(view)
+                                        errorStateController.setOnRefreshAction(view) {
                                             logger.info("${Plugin.PLUGIN_NAME} on sending tasks connection failed. Try to resend")
                                             taskController.resendLastTask()
                                             null
@@ -119,8 +120,8 @@ internal object MainController {
                         }
 
                         DataSendingResult.SUCCESS -> {
-                            if (!taskController.isAllTasksSentOrSendNext()) {
-                                browserViews.forEach { view -> successViewController.updateViewContent(view) }
+                            if (taskController.isAllTasksSentOrSendNext()) {
+                                browserViews.forEach { view -> successStateController.updateViewContent(view) }
                             }
                         }
                     }
@@ -134,7 +135,7 @@ internal object MainController {
         PluginServer.checkItInitialized(project)
 
         val createdView = BrowserView(project)
-        successViewController.updateViewContent(createdView)
+        successStateController.updateViewContent(createdView)
         browserViews.add(createdView)
 
         return JBScrollPane(createdView)
