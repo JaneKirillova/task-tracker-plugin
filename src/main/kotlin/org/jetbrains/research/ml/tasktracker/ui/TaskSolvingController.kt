@@ -20,12 +20,13 @@ class TaskSolvingController(tasks: List<Task>) {
     private val tasksToSendIterator = tasks.iterator()
 
     private var currentSendingTask: Task? = null
+    //TODO: But it was only one initialized project with tasks?
     private var projectWithTask: Project? = null
 
     var currentSolvingTask: Task? = null
         private set
 
-    fun startSolvingNextTask(project: Project) {
+    fun startNextTask(project: Project) {
         if (taskIterator.hasNext()) {
             currentSolvingTask = taskIterator.next()
             logger.info("Start solving ${currentSolvingTask?.key}")
@@ -37,7 +38,7 @@ class TaskSolvingController(tasks: List<Task>) {
 
                 it.ideSettings.actionsToToggle.forEach { action ->
                     logger.info("Toggle $action")
-                    appliedActions[action] = appliedActions.getOrDefault(action, 0) + 1
+                    appliedActions[action] = appliedActions.getOrDefault(action, 0).inc()
                     executeIdeAction(action)
                 }
                 for ((key, value) in it.ideSettings.parameters) {
@@ -53,7 +54,7 @@ class TaskSolvingController(tasks: List<Task>) {
                 }
             }
 
-        } else if (MainController.successViewController.currentState == ViewState.TASK_SOLVING) {
+        } else {
             logger.info("Solution Completed. Start uploading solutions.")
             executeIdeAction("HideAllWindows")
             for ((key, value) in storedIdeProperties) {
@@ -68,9 +69,9 @@ class TaskSolvingController(tasks: List<Task>) {
 
             projectWithTask = project
             isAllTasksSentOrSendNext()
-            MainController.successViewController.currentState = ViewState.FEEDBACK
+            MainController.successStateController.currentState = ViewState.FEEDBACK
             MainController.browserViews.forEach {
-                MainController.successViewController.updateViewContent(it)
+                MainController.successStateController.updateViewContent(it)
             }
         }
     }
@@ -91,9 +92,9 @@ class TaskSolvingController(tasks: List<Task>) {
                     PluginServer.sendDataForTask(task, project)
                 }
             }
-            return true
+            return false
         }
-        return false
+        return true
     }
 
     fun executeIdeAction(actionId: String) {
