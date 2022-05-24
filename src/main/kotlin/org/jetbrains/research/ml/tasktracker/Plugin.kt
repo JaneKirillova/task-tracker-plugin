@@ -137,7 +137,7 @@ object Plugin {
         return ideVersion?.let {
 //          If IDE version is more than 2020.2, we need to use JavaFX runtime since we use JavaFX for UI
             if (ideVersion >= Version(2020, 2, 0)) {
-                arrayListOf(getActivityTrackerPlugin(NEW_PLUGINS_FOLDER), getJavaFxPlugin(NEW_PLUGINS_FOLDER))
+                arrayListOf(getActivityTrackerPlugin(NEW_PLUGINS_FOLDER), /*getJavaFxPlugin(NEW_PLUGINS_FOLDER)*/)
             } else {
                 arrayListOf(getActivityTrackerPlugin(OLD_PLUGINS_FOLDER))
             }
