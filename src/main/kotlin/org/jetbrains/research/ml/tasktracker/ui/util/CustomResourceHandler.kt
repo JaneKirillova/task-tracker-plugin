@@ -19,7 +19,8 @@ class CustomResourceHandler : CefResourceHandler {
         return when (cefRequest.url) {
             null -> false
             else -> {
-                val pathToResource = cefRequest.url.replace("http://tasktracker", "/ui")
+                val pathToResource =
+                    cefRequest.url.replace("http://tasktracker", "/org/jetbrains/research/ml/tasktracker/ui")
                 val newUrl = javaClass.getResource(pathToResource)
                 state = OpenedConnection(
                     newUrl.openConnection()
