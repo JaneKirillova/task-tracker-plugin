@@ -20,8 +20,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="org.jetbrains.research.ml.tasktracker.InitActivity"/>
-        <toolWindow id="tasktracker" anchor="right"
-                    factoryClass="org.jetbrains.research.ml.tasktracker.ui.PluginToolWindowFactory"/>
+        <toolWindow id="TaskTracker" anchor="right" factoryClass="org.jetbrains.research.ml.tasktracker.ui.PluginToolWindowFactory"/>
         <errorHandler implementation="org.jetbrains.research.ml.tasktracker.reporting.GitHubErrorReporter"/>
         <writingAccessProvider implementation="org.jetbrains.research.ml.tasktracker.tracking.PluginAccessProvider"/>
     </extensions>
