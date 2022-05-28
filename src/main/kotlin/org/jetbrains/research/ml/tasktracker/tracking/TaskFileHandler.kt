@@ -55,6 +55,7 @@ object TaskFileHandler {
                 virtualFile?.let {
                     addTaskFile(it, task, project)
                     ApplicationManager.getApplication().invokeAndWait {
+                        project.addBulkFileListener(listener)
                         if (task.isItsFileWritable()) {
                             openFile(project, virtualFile)
                         } else {
@@ -71,7 +72,7 @@ object TaskFileHandler {
             logger.info("Project $project is already added or set to be added")
             return
         }
-        if (MainController.successStateController.currentState == ViewState.TASK_SOLVING) {
+        if (MainController.browserViews[project]?.state == ViewState.TASK_SOLVING) {
             initProject(project)
         } else {
             projectsToInit.add(project)
@@ -129,7 +130,7 @@ object TaskFileHandler {
             ApplicationManager.getApplication().invokeAndWait {
                 val document = FileDocumentManager.getInstance().getDocument(virtualFile)
                 document?.let {
-                    it.addDocumentListener(listener)
+                    //it.addDocumentListener(listener)
                     // Log the first state
                     DocumentLogger.log(it)
                 }
@@ -148,6 +149,10 @@ object TaskFileHandler {
 
     fun openTaskFiles(task: Task, language: Language = Language.PYTHON) {
         projectToTaskToFiles.forEach { (project, taskFiles) -> openFile(project, taskFiles[task]) }
+    }
+
+    fun openProjectTaskFile(project: Project, task: Task) {
+        projectToTaskToFiles[project]?.let { openFile(project, it[task]) }
     }
 
     /*
@@ -185,7 +190,8 @@ object TaskFileHandler {
      * File is writable if it's task is null or its task is currently chosen on the TaskSolvingPane
      */
     fun Task?.isItsFileWritable(): Boolean {
-        return (this == null || this == MainController.taskController.currentSolvingTask)
+        //Is it possible to get project by virtual file and check state of view?
+        return true/*(this == null || this == MainController.taskController.currentSolvingTask)*/
     }
 
 
