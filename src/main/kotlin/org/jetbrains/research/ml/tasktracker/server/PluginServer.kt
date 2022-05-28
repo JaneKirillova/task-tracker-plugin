@@ -12,8 +12,6 @@ import org.jetbrains.research.ml.tasktracker.Plugin
 import org.jetbrains.research.ml.tasktracker.models.*
 import org.jetbrains.research.ml.tasktracker.tracking.DocumentLogger
 import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
-import org.jetbrains.research.ml.tasktracker.ui.MainController
-import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
 import java.util.function.Consumer
 
 enum class ServerConnectionResult {
@@ -43,51 +41,28 @@ interface DataSendingNotifier : Consumer<DataSendingResult> {
 object PluginServer {
     var paneText: PaneText? = null
         private set
-    var availableLanguages: List<PaneLanguage> = emptyList()
-        private set
     var tasks: List<Task> = emptyList()
         private set
-    var genders: List<Gender> = emptyList()
-        private set
-    var countries: List<Country> = emptyList()
-        private set
-    var taskSolvingErrorDialogText: TaskSolvingErrorDialogText? = null
-        private set
-    var programmingLanguages: List<Language> = emptyList()
-        private set
+
+    /*    var availableLanguages: List<PaneLanguage> = emptyList()
+            private set
+        var genders: List<Gender> = emptyList()
+            private set
+        var countries: List<Country> = emptyList()
+            private set
+        var taskSolvingErrorDialogText: TaskSolvingErrorDialogText? = null
+            private set
+        var programmingLanguages: List<Language> = emptyList()
+            private set*/
     private val logger: Logger = Logger.getInstance(javaClass)
 
     var serverConnectionResult: ServerConnectionResult = ServerConnectionResult.UNINITIALIZED
         private set
     private var dataSendingResult: DataSendingResult = DataSendingResult.SUCCESS
-    var lastSendingProject: Project? = null
 
     fun checkItInitialized(project: Project) {
         if (serverConnectionResult == ServerConnectionResult.UNINITIALIZED) {
-            when (MainController.successStateController.currentState) {
-                ViewState.GREETING -> {
-                    reconnect(project)
-                }
-                else -> {
-                    reconnectUserId(project)
-                }
-            }
-        }
-    }
-
-    /**
-     * Receives tasks in background task and sends results about receiving
-     */
-    fun reconnectTasks(project: Project) {
-        if (serverConnectionResult != ServerConnectionResult.LOADING) {
-            logger.info("${Plugin.PLUGIN_NAME} PluginServer getting reconnect tasks, current thread is ${Thread.currentThread().name}")
-            ProgressManager.getInstance().run(object : Backgroundable(project, "Getting tasks from server") {
-                override fun run(indicator: ProgressIndicator) {
-                    safeReceive {
-                        tasks = receiveTasks()
-                    }
-                }
-            })
+            reconnect(project)
         }
     }
 
@@ -95,7 +70,6 @@ object PluginServer {
      * Receives user ID in background task and sends results about receiving
      */
     fun reconnectUserId(project: Project) {
-        lastSendingProject = project
         if (serverConnectionResult != ServerConnectionResult.LOADING) {
             logger.info("${Plugin.PLUGIN_NAME} PluginServer getting reconnect id, current thread is ${Thread.currentThread().name}")
             ProgressManager.getInstance().run(object : Backgroundable(project, "Getting ID from server") {
@@ -141,11 +115,20 @@ object PluginServer {
 
     private fun receiveData() {
         paneText = receivePaneText()
-        availableLanguages = receiveAvailableLanguages()
+/*        availableLanguages = receiveAvailableLanguages()
         genders = receiveGenders()
         countries = receiveCountries()
         taskSolvingErrorDialogText = receiveTaskSolvingErrorDialogText()
-        programmingLanguages = receiveProgrammingLanguages()
+        programmingLanguages = receiveProgrammingLanguages()*/
+        tasks = receiveTasks()
+    }
+
+    fun filterTasks(id: Int) {
+        tasks = if (id % 2 == 0) {
+            tasks.filter { it.isExperimental }
+        } else {
+            tasks.filter { !it.isExperimental }
+        }
     }
 
     private fun receiveProgrammingLanguages(): List<Language> {
