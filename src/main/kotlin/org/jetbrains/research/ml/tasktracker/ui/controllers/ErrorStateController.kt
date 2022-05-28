@@ -1,7 +1,7 @@
 package org.jetbrains.research.ml.tasktracker.ui.controllers
 
 import com.intellij.ui.jcef.JBCefJSQuery
-import org.jetbrains.research.ml.tasktracker.ui.BrowserView
+import org.jetbrains.research.ml.tasktracker.ui.view.BrowserView
 
 class ErrorStateController {
     fun updateViewContent(view: BrowserView) {

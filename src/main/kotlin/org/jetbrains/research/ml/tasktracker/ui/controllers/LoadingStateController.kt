@@ -1,6 +1,6 @@
 package org.jetbrains.research.ml.tasktracker.ui.controllers
 
-import org.jetbrains.research.ml.tasktracker.ui.BrowserView
+import org.jetbrains.research.ml.tasktracker.ui.view.BrowserView
 
 class LoadingStateController  {
     fun updateViewContent(view: BrowserView) {

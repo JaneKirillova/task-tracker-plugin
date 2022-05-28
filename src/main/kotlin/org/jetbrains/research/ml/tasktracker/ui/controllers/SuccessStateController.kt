@@ -3,22 +3,19 @@ package org.jetbrains.research.ml.tasktracker.ui.controllers
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.research.ml.tasktracker.models.PaneLanguage
-import org.jetbrains.research.ml.tasktracker.models.UserData
 import org.jetbrains.research.ml.tasktracker.server.PluginServer
 import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
-import org.jetbrains.research.ml.tasktracker.ui.BrowserView
-import org.jetbrains.research.ml.tasktracker.ui.MainController
+import org.jetbrains.research.ml.tasktracker.ui.util.SurveyData
 import org.jetbrains.research.ml.tasktracker.ui.util.getSurveyPage
+import org.jetbrains.research.ml.tasktracker.ui.view.BrowserView
 
 
 class SuccessStateController {
     private val logger: Logger = Logger.getInstance(javaClass)
-    val userData = UserData()
-    var currentState = ViewState.GREETING
 
     fun updateViewContent(view: BrowserView) {
-        logger.info("View loaded with $currentState state")
-        when (currentState) {
+        logger.info("View loaded with ${view.state} state")
+        when (view.state) {
             ViewState.GREETING -> {
                 view.updateViewByUrl("http://tasktracker/GreetingPage.html")
                 setGreetingAction(view)
@@ -32,7 +29,7 @@ class SuccessStateController {
                         ), "http://tasktracker/QuestionsFirstPage.html"
                     )
                     setQuestionsFirstAction(view)
-                } ?: run { MainController.errorStateController.updateViewContent(view) }
+                }
             }
             ViewState.QUESTIONS_SECOND -> {
                 PluginServer.paneText?.let {
@@ -44,7 +41,7 @@ class SuccessStateController {
                         ), "http://tasktracker/QuestionsSecondPage.html"
                     )
                     setQuestionsSecondAction(view)
-                } ?: run { MainController.errorStateController.updateViewContent(view) }
+                }
             }
             ViewState.PRE_TASK_SOLVING -> {
                 view.updateViewByUrl("http://tasktracker/PreSolvingPage.html")
@@ -63,8 +60,8 @@ class SuccessStateController {
         }
     }
 
-    private fun setGreetingAction(currentView: BrowserView) {
-        currentView.executeJavascript(
+    private fun setGreetingAction(view: BrowserView) {
+        view.executeJavascript(
             """
                             var submitButton = document.getElementById('submit-button');
                             submitButton.onclick = function () {
@@ -75,18 +72,16 @@ class SuccessStateController {
                             """, """}}""", "userInfo"
         ) {
             val listOfUserData = it.split(',')
-            userData.name = listOfUserData[0]
-            userData.email = listOfUserData[1]
-            currentState = ViewState.QUESTIONS_FIRST
-            MainController.browserViews.forEach { browserView ->
-                updateViewContent(browserView)
-            }
+            SurveyData.name = listOfUserData[0]
+            SurveyData.email = listOfUserData[1]
+            view.state = ViewState.QUESTIONS_FIRST
+            updateViewContent(view)
             null
         }
     }
 
-    private fun setQuestionsFirstAction(currentView: BrowserView) {
-        currentView.executeJavascript(
+    private fun setQuestionsFirstAction(view: BrowserView) {
+        view.executeJavascript(
             """
                             var nextButton = document.getElementById('next-button');
                             nextButton.onclick = function () {
@@ -96,17 +91,15 @@ class SuccessStateController {
             """, """}}""", "selectedVariants"
         ) {
             val listOfUserAnswers = it.split(',').map { answer -> answer.toInt() }
-            userData.listOfAnswers += listOfUserAnswers
-            currentState = ViewState.QUESTIONS_SECOND
-            MainController.browserViews.forEach { browserView ->
-                updateViewContent(browserView)
-            }
+            SurveyData.form += listOfUserAnswers
+            view.state = ViewState.QUESTIONS_SECOND
+            updateViewContent(view)
             null
         }
     }
 
-    private fun setQuestionsSecondAction(currentView: BrowserView) {
-        currentView.executeJavascript(
+    private fun setQuestionsSecondAction(view: BrowserView) {
+        view.executeJavascript(
             """
                             var nextButton = document.getElementById('next-button');
                             nextButton.onclick = function () {
@@ -116,39 +109,35 @@ class SuccessStateController {
             """, """}}""", "selectedVariants"
         ) {
             val listOfUserAnswers = it.split(',').map { answer -> answer.toInt() }
-            userData.listOfAnswers += listOfUserAnswers
-            logger.info("Received $userData")
-            PluginServer.reconnectUserId(currentView.project)
-            currentState = ViewState.PRE_TASK_SOLVING
-            MainController.browserViews.forEach { browserView ->
-                updateViewContent(browserView)
-            }
+            SurveyData.form += listOfUserAnswers
+            logger.info("Received survey info: name=${SurveyData.name}, email=${SurveyData.email}, form=${SurveyData.form}")
+            PluginServer.reconnectUserId(view.project)
+            view.state = ViewState.PRE_TASK_SOLVING
+            updateViewContent(view)
             null
         }
     }
 
-    private fun setPreSolvingAction(currentView: BrowserView) {
-        currentView.executeJavascript(
+    private fun setPreSolvingAction(view: BrowserView) {
+        view.executeJavascript(
             """
                             var goButton = document.getElementById('go-button');
                             goButton.onclick = function () {
             """, """}"""
         ) {
             ApplicationManager.getApplication().invokeLater {
-                TaskFileHandler.initProject(currentView.project)
+                TaskFileHandler.initProject(view.project)
             }
-            MainController.taskController.executeIdeAction("HideAllWindows")
-            MainController.taskController.startNextTask(currentView.project)
-            currentState = ViewState.TASK_SOLVING
-            MainController.browserViews.forEach { browserView ->
-                updateViewContent(browserView)
-            }
+            view.taskController.executeIdeAction("HideAllWindows")
+            view.taskController.startNextTask()
+            view.state = ViewState.TASK_SOLVING
+            updateViewContent(view)
             null
         }
     }
 
-    private fun setFeedbackAction(currentView: BrowserView) {
-        currentView.executeJavascript(
+    private fun setFeedbackAction(view: BrowserView) {
+        view.executeJavascript(
             """
                             var submitButton = document.getElementById('submit-button');
                             submitButton.onclick = function () {
@@ -156,12 +145,10 @@ class SuccessStateController {
                                 var feedbackText = feedback.value;
             """, """}""", "feedbackText"
         ) {
-            userData.feedback = it
-            PluginServer.sendFeedback(userData.feedback, currentView.project)
-            currentState = ViewState.FINAL
-            MainController.browserViews.forEach { browserView ->
-                updateViewContent(browserView)
-            }
+            SurveyData.feedback = it
+            PluginServer.sendFeedback(it, view.project)
+            view.state = ViewState.FINAL
+            updateViewContent(view)
             null
         }
     }

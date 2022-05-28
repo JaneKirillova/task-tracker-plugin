@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.tasktracker.ui
+package org.jetbrains.research.ml.tasktracker.ui.view
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
@@ -12,22 +12,35 @@ import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandler
 import org.cef.handler.CefLoadHandlerAdapter
+import org.jetbrains.research.ml.tasktracker.server.*
+import org.jetbrains.research.ml.tasktracker.ui.MainController
+import org.jetbrains.research.ml.tasktracker.ui.controllers.TaskSolvingController
+import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
 import org.jetbrains.research.ml.tasktracker.ui.util.CustomSchemeHandlerFactory
 
 /**
  * Stores jbCefBrowser and project in which it was created
  */
 class BrowserView(val project: Project) : SimpleToolWindowPanel(true, true) {
-
+    var state = ViewState.GREETING
+    val taskController by lazy {
+        TaskSolvingController(PluginServer.tasks, this)
+    }
     private var currentCefLoadHandler: CefLoadHandler? = null
-    private val jbCefBrowser: JBCefBrowser = JBCefBrowser()
+    private val jbCefBrowser: JBCefBrowser = object : JBCefBrowser() {
+        override fun dispose() {
+            MainController.browserViews.remove(project)
+            super.dispose()
+        }
+    }
 
     init {
-        jbCefBrowser.jbCefClient.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, 10)
+        jbCefBrowser.jbCefClient.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, 100)
         registerAppSchemeHandler()
         Disposer.register(project, jbCefBrowser)
         setContent(jbCefBrowser.component)
     }
+
 
     private fun registerAppSchemeHandler() {
         CefApp.getInstance().registerSchemeHandlerFactory(
@@ -44,14 +57,13 @@ class BrowserView(val project: Project) : SimpleToolWindowPanel(true, true) {
         queryResult: String = "",
         action: (String) -> JBCefJSQuery.Response?
     ) {
-        val jsQueryGetSelectedProjects = JBCefJSQuery.create(jbCefBrowser as JBCefBrowserBase)
-        jsQueryGetSelectedProjects.addHandler(action)
-
+        val jbCefJSQuery = JBCefJSQuery.create(jbCefBrowser as JBCefBrowserBase)
+        jbCefJSQuery.addHandler(action)
         currentCefLoadHandler = object : CefLoadHandlerAdapter() {
             override fun onLoadEnd(browser: CefBrowser?, frame: CefFrame?, httpStatusCode: Int) {
                 jbCefBrowser.cefBrowser.executeJavaScript(
                     (codeBeforeInject + """
-                        ${jsQueryGetSelectedProjects.inject(queryResult)};
+                        ${jbCefJSQuery.inject(queryResult)};
                     """ + codeAfterInject).trimIndent(), jbCefBrowser.cefBrowser.url, 0
                 )
                 super.onLoadEnd(browser, frame, httpStatusCode)

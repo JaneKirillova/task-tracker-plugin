@@ -7,9 +7,10 @@ import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
 
 class NextButtonAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        if (MainController.successStateController.currentState == ViewState.TASK_SOLVING)
-            getEventProject(e)?.let {
-                MainController.taskController.startNextTask(it)
+        getEventProject(e)?.let {
+            if (MainController.browserViews[it]?.state == ViewState.TASK_SOLVING) {
+                MainController.browserViews[it]?.taskController?.startNextTask()
             }
+        }
     }
 }
