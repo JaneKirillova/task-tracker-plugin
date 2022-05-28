@@ -4,7 +4,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import org.jetbrains.research.ml.tasktracker.Plugin
 import org.jetbrains.research.ml.tasktracker.server.TrackerQueryExecutor
-import org.jetbrains.research.ml.tasktracker.ui.MainController
+import org.jetbrains.research.ml.tasktracker.ui.util.SurveyData
 import org.joda.time.DateTime
 
 data class LoggedDataGetter<T, S>(val header: String, val getData: (T) -> S)
@@ -28,9 +28,9 @@ enum class UiLoggedDataHeader(val header: String) {
 
 object UiLoggedData : LoggedData<Unit, String>() {
     override val loggedDataGetters: List<LoggedDataGetter<Unit, String>> = arrayListOf(
-        LoggedDataGetter(UiLoggedDataHeader.Name.header) { MainController.successStateController.userData.name.toString() },
-        LoggedDataGetter(UiLoggedDataHeader.Email.header) { MainController.successStateController.userData.email.toString() },
-        LoggedDataGetter(UiLoggedDataHeader.Answers.header) { MainController.successStateController.userData.listOfAnswers.toString() },
+        LoggedDataGetter(UiLoggedDataHeader.Name.header) { SurveyData.name },
+        LoggedDataGetter(UiLoggedDataHeader.Email.header) { SurveyData.email },
+        LoggedDataGetter(UiLoggedDataHeader.Answers.header) { SurveyData.form.toString()},
     )
 }
 
