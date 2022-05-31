@@ -55,7 +55,6 @@ object TaskFileHandler {
                 virtualFile?.let {
                     addTaskFile(it, task, project)
                     ApplicationManager.getApplication().invokeAndWait {
-                        project.addBulkFileListener(listener)
                         if (task.isItsFileWritable()) {
                             openFile(project, virtualFile)
                         } else {
@@ -130,7 +129,7 @@ object TaskFileHandler {
             ApplicationManager.getApplication().invokeAndWait {
                 val document = FileDocumentManager.getInstance().getDocument(virtualFile)
                 document?.let {
-                    //it.addDocumentListener(listener)
+                    it.addDocumentListener(listener)
                     // Log the first state
                     DocumentLogger.log(it)
                 }
