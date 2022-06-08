@@ -6,6 +6,7 @@ import org.jetbrains.research.ml.tasktracker.models.PaneLanguage
 import org.jetbrains.research.ml.tasktracker.server.PluginServer
 import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
 import org.jetbrains.research.ml.tasktracker.ui.util.SurveyData
+import org.jetbrains.research.ml.tasktracker.ui.util.getSurveyFactors
 import org.jetbrains.research.ml.tasktracker.ui.util.getSurveyPage
 import org.jetbrains.research.ml.tasktracker.ui.view.BrowserView
 
@@ -56,6 +57,7 @@ class SuccessStateController {
             }
             ViewState.FINAL -> {
                 view.updateViewByUrl("http://tasktracker/FinalPage.html")
+                setFinalAction(view)
             }
         }
     }
@@ -151,5 +153,14 @@ class SuccessStateController {
             updateViewContent(view)
             null
         }
+    }
+
+    private fun setFinalAction(view: BrowserView) {
+        view.executeJavascript(
+            """
+                            var outputField = document.getElementById('factors-output');
+                            outputField.textContent = "${getSurveyFactors(SurveyData.form).joinToString(", ")}"
+            """, "", ""
+        ) { null }
     }
 }

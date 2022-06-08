@@ -49,7 +49,7 @@ private fun HTML.generateHead(title: String): HTML {
                     raw(
                         """
                                 body {
-                                width: 60%;
+                                width: 50%;
                                 float: left;
                                 display: inline-block;
                                 text-align: center;
@@ -69,10 +69,14 @@ private fun HTML.generateTableInfo(title: String): HTML {
             h2 { text(title) }
             p {
                 attributes["style"] = "padding: 15px;text-align: left"
-                br { text("Please, proceed with the survey.") }
-                br { text("How often do you experience each of these problems?") }
-                br { text("1- Never or rarely; 2 - Sometimes; 3 - Often; 4 - Very often.") }
                 br {
+                    text("Please, proceed with the survey.")
+                }
+                br {
+                    text("How often do you experience each of these problems?")
+                }
+                br {
+                    text("1- Never or rarely; 2 - Sometimes; 3 - Often; 4 - Very often. ")
                     text("Please mark the number next to each item that best describes your behavior")
                     b { text(" during the past 6 months") }
                 }
