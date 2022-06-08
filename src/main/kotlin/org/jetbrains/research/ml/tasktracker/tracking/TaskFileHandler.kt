@@ -17,6 +17,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore.isEqualOrAncestor
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.io.ReadOnlyAttributeUtil
 import org.jetbrains.jps.model.serialization.PathMacroUtil
 import org.jetbrains.research.ml.tasktracker.Plugin
@@ -51,7 +52,7 @@ object TaskFileHandler {
         PluginServer.tasks.forEach { task ->
             ///TODO hardcoded jupyter((
             Language.JUPYTER?.let {
-                val virtualFile = getOrCreateFile(project, task, it)
+                val virtualFile = getOrCreateNotebookFile(project, task, it)
                 virtualFile?.let {
                     addTaskFile(it, task, project)
                     ApplicationManager.getApplication().invokeAndWait {
@@ -99,6 +100,24 @@ object TaskFileHandler {
             }
         }
         return null
+    }
+
+    private fun getOrCreateNotebookFile(project: Project, task: Task, language: Language): VirtualFile? {
+        val relativeFilePath = TaskFileInitContentProvider.getLanguageFolderRelativePath(language)
+        ApplicationManager.getApplication().runWriteAction {
+            addSourceFolder(relativeFilePath, ModuleManager.getInstance(project).modules.last())
+        }
+        val path =
+            "${project.basePath}/$relativeFilePath/${TaskFileInitContentProvider.getTaskFileName(task, language)}"
+        val file = File(path)
+        if (!file.exists()) {
+            ApplicationManager.getApplication().runWriteAction {
+                FileUtil.createIfDoesntExist(file)
+                file.writeText(TaskFileInitContentProvider.getInitFileContent(task, language))
+            }
+        }
+        LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file)
+        return VirtualFileManager.getInstance().getFileSystem("notebook").findFileByPath(path)
     }
 
     private fun getOrCreateFile(project: Project, task: Task, language: Language): VirtualFile? {

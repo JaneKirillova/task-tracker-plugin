@@ -30,6 +30,10 @@ class BrowserView(val project: Project) : SimpleToolWindowPanel(true, true) {
     private val jbCefBrowser: JBCefBrowser = object : JBCefBrowser() {
         override fun dispose() {
             MainController.browserViews.remove(project)
+            //Returns to the user properties if there are no other windows in the TASK_SOLVING state
+            if(MainController.browserViews.filter { it.value.state == ViewState.TASK_SOLVING }.isEmpty()){
+                taskController.returnToUserProperties()
+            }
             super.dispose()
         }
     }

@@ -55,12 +55,15 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
         }
     }
 
-    private fun finishSolvingState() {
-        logger.info("Solution Completed. Start uploading solutions.")
-        executeIdeAction("HideAllWindows")
+    fun returnToUserProperties() {
         for ((key, value) in storedIdeProperties) {
             PropertiesComponent.getInstance().setValue(key, value)
         }
+    }
+
+    private fun finishSolvingState() {
+        logger.info("Solution Completed. Start uploading solutions.")
+        executeIdeAction("HideAllWindows")
 
         for ((action, usages) in appliedActions) {
             if (usages % 2 == 1) {
