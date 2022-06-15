@@ -19,7 +19,8 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
     private val taskIterator = tasks.iterator()
     private val tasksToSendIterator = tasks.iterator()
 
-    private var currentSolvingTask: Task? = null
+    var currentSolvingTask: Task? = null
+        private set
     private var currentSendingTask: Task? = null
 
     fun startNextTask() {
@@ -32,12 +33,18 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
                     TaskFileHandler.openProjectTaskFile(view.project, it)
                 }
 
-                it.ideSettings.actionsToToggle.forEach { action ->
-                    logger.info("Toggle $action")
-                    appliedActions[action] = appliedActions.getOrDefault(action, 0).inc()
-                    executeIdeAction(action)
+                it.ideSettings?.actionsToToggle?.forEach { action ->
+                    if (appliedActions[action]?.rem(2) == 0) {
+                        logger.info("Toggle $action")
+                        appliedActions[action] = appliedActions.getOrDefault(action, 0).inc()
+                        executeIdeAction(action)
+                    }
+                } ?: run {
+                    returnToDefaultActions()
                 }
-                for ((key, value) in it.ideSettings.parameters) {
+                //TODO update logic for it
+                val properties = it.ideSettings?.parameters ?: emptyMap()
+                for ((key, value) in properties) {
                     //Mongoose database does not allow to store keys with dots
                     val correctKey = key.replace("___", ".")
 
@@ -61,15 +68,20 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
         }
     }
 
+    fun returnToDefaultActions() {
+        for ((action, usages) in appliedActions) {
+            if (usages % 2 == 1) {
+                executeIdeAction(action)
+                appliedActions[action] = usages.inc()
+            }
+        }
+    }
+
     private fun finishSolvingState() {
         logger.info("Solution Completed. Start uploading solutions.")
         executeIdeAction("HideAllWindows")
 
-        for ((action, usages) in appliedActions) {
-            if (usages % 2 == 1) {
-                executeIdeAction(action)
-            }
-        }
+        returnToDefaultActions()
 
         isAllTasksSentOrSendNext()
         view.state = ViewState.FEEDBACK

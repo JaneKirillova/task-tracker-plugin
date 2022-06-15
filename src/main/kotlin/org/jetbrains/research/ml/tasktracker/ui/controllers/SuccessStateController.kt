@@ -5,9 +5,9 @@ import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.research.ml.tasktracker.models.PaneLanguage
 import org.jetbrains.research.ml.tasktracker.server.PluginServer
 import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
+import org.jetbrains.research.ml.tasktracker.ui.util.HtmlGenerator
 import org.jetbrains.research.ml.tasktracker.ui.util.SurveyData
 import org.jetbrains.research.ml.tasktracker.ui.util.getSurveyFactors
-import org.jetbrains.research.ml.tasktracker.ui.util.getSurveyPage
 import org.jetbrains.research.ml.tasktracker.ui.view.BrowserView
 
 
@@ -25,8 +25,9 @@ class SuccessStateController {
                 PluginServer.paneText?.let {
                     val listOfQuestions = it.surveyPane[PaneLanguage("en")]?.questions
                     view.updateViewByHtml(
-                        getSurveyPage(
-                            "Survey: first part", listOfQuestions?.subList(0, listOfQuestions.size / 2) ?: emptyList()
+                        HtmlGenerator().getSurveyPage(
+                            "Thank you for your decision to proceed with us. We are asking you to fill in the survey at this step. It consists of 20 questions and will take about 5 minutes to fill in.",
+                            listOfQuestions?.subList(0, listOfQuestions.size / 2) ?: emptyList()
                         ), "http://tasktracker/QuestionsFirstPage.html"
                     )
                     setQuestionsFirstAction(view)
@@ -36,8 +37,8 @@ class SuccessStateController {
                 PluginServer.paneText?.let {
                     val listOfQuestions = it.surveyPane[PaneLanguage("en")]?.questions
                     view.updateViewByHtml(
-                        getSurveyPage(
-                            "Survey: second part",
+                        HtmlGenerator().getSurveyPage(
+                            "Please, proceed with the survey",
                             listOfQuestions?.subList(listOfQuestions.size / 2, listOfQuestions.size) ?: emptyList()
                         ), "http://tasktracker/QuestionsSecondPage.html"
                     )
@@ -68,8 +69,8 @@ class SuccessStateController {
                             var submitButton = document.getElementById('submit-button');
                             submitButton.onclick = function () {
                             if (checkInputFields()) {
-                            var nameField = document.getElementById('nameField').value;
-                            var emailField = document.getElementById('emailField').value;
+                            var nameField = document.getElementById('name-field').value;
+                            var emailField = document.getElementById('email-field').value;
                             var userInfo = [nameField, emailField].join(',');
                             """, """}}""", "userInfo"
         ) {

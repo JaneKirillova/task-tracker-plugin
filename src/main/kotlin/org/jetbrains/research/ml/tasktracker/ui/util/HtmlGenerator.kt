@@ -5,33 +5,35 @@ import kotlinx.html.dom.append
 import kotlinx.html.dom.document
 import kotlinx.html.dom.serialize
 
-
-fun getSurveyPage(title: String, questions: List<String>): String {
-    return document {
-        append.html {
-            generateHead(title)
-            generateTableInfo(title)
-            generateQuestionsTable(questions)
-            body {
-                p {
-                    button {
-                        id = "next-button"
-                        text("Next")
+class HtmlGenerator {
+    fun getSurveyPage(title: String, questions: List<String>): String {
+        return document {
+            append.html {
+                generateHead()
+                generateTableInfo(title)
+                generateQuestionsTable(questions)
+                body {
+                    p {
+                        attributes["style"] = "text-align: center;padding-bottom: 10px;"
+                        attributes["font"] = "normal 18px/1.6 system-ui, sans-serif;"
+                        button {
+                            attributes
+                            id = "next-button"
+                            text("Next")
+                        }
                     }
                 }
             }
-        }
-    }.serialize()
-}
+        }.serialize()
+    }
 
-private fun HTML.generateHead(title: String): HTML {
-    return apply {
-        head {
-            title(title)
-            script {
-                unsafe {
-                    raw(
-                        """
+    private fun HTML.generateHead(): HTML {
+        return apply {
+            head {
+                script {
+                    unsafe {
+                        raw(
+                            """
                                 function checkSurvey() {
                                 var elements = document.querySelectorAll('.question:checked');
                                 if (elements.length !== 10) {
@@ -41,78 +43,76 @@ private fun HTML.generateHead(title: String): HTML {
                                 return true
                                 }
                                 """.trimIndent()
-                    )
-                }
-            }
-            style {
-                unsafe {
-                    raw(
-                        """
-                                body {
-                                width: 50%;
-                                float: left;
-                                display: inline-block;
-                                text-align: center;
-                                }
-                                    """.trimIndent()
-                    )
-                }
-
-            }
-        }
-    }
-}
-
-private fun HTML.generateTableInfo(title: String): HTML {
-    return apply {
-        body {
-            h2 { text(title) }
-            p {
-                attributes["style"] = "padding: 15px;text-align: left"
-                br {
-                    text("Please, proceed with the survey.")
-                }
-                br {
-                    text("How often do you experience each of these problems?")
-                }
-                br {
-                    text("1- Never or rarely; 2 - Sometimes; 3 - Often; 4 - Very often. ")
-                    text("Please mark the number next to each item that best describes your behavior")
-                    b { text(" during the past 6 months") }
-                }
-            }
-        }
-    }
-}
-
-private fun HTML.generateQuestionsTable(questions: List<String>): HTML {
-    return apply {
-        body {
-            form {
-                table {
-                    attributes["cellspacing"] = "15"
-                    tr {
-                        th { text("Question") }
-                        th { text("Never or rarely") }
-                        th { text("Sometimes") }
-                        th { text("Often") }
-                        th { text("Very often") }
+                        )
                     }
-                    questions.forEachIndexed { index, question ->
+                }
+                style {
+                    unsafe {
+                        raw(
+                            javaClass.getResource("/org/jetbrains/research/ml/tasktracker/ui/css/survey.css")
+                                ?.readText().toString()
+
+                        )
+                    }
+
+                }
+            }
+        }
+    }
+
+    private fun HTML.generateTableInfo(title: String): HTML {
+        return apply {
+            body {
+                h2 { text(title) }
+                p {
+                    attributes["style"] = "text-align: left"
+                    br {
+                        text("How often do you experience each of these problems?")
+                    }
+                    br {
+                        text("1- Never or rarely; 2 - Sometimes; 3 - Often; 4 - Very often. ")
+                        text("Please mark the number next to each item that best describes your behavior")
+                        b { text(" during the past 6 months.") }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun HTML.generateQuestionsTable(questions: List<String>): HTML {
+        return apply {
+            body {
+                form {
+                    table {
+                        attributes["cellspacing"] = "10"
+                        attributes["width"] = "100%"
                         tr {
-                            td {
-                                attributes["style"] = "text-align: left;"
-                                text(question)
+                            th {
+                                attributes["style"] = "width:60;"
+                                text("Question")
                             }
-                            for (i in 1..4) {
+                            th { text("Never or rarely") }
+                            th { text("Sometimes") }
+                            th { text("Often") }
+                            th { text("Very often") }
+                        }
+                        questions.forEachIndexed { index, question ->
+                            tr {
                                 td {
-                                    input {
-                                        type = InputType.radio
-                                        classes = setOf("question")
-                                        name = "choose-button-$index"
-                                        value = i.toString()
+                                    attributes["style"] = "text-align: left;display: inline-block;"
+                                    text(question)
+                                }
+                                for (i in 1..4) {
+                                    td {
+                                        attributes["style"] = "text-align:center;"
+                                        input {
+                                            type = InputType.radio
+                                            classes = setOf("question")
+                                            name = "choose-button-$index"
+                                            value = i.toString()
+                                        }
+                                        text(i)
                                     }
-                                    text(i)
                                 }
                             }
                         }

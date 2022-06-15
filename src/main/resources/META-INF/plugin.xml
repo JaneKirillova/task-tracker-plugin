@@ -25,7 +25,7 @@
         <writingAccessProvider implementation="org.jetbrains.research.ml.tasktracker.tracking.PluginAccessProvider"/>
     </extensions>
     <actions>
-        <group id="TaskTracker.Controller" text="TackTracker" description="TaskTracker controller">
+        <group id="TaskTracker.Controller" text="Next Task" description="TaskTracker controller">
             <action id="org.jetbrains.research.ml.tasktracker.services.NextButtonAction"
                     class="org.jetbrains.research.ml.tasktracker.services.NextButtonAction" text="Next Task"
                     description="Get next task from TaskTracker">

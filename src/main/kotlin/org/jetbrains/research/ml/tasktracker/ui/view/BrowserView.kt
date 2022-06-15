@@ -12,7 +12,7 @@ import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandler
 import org.cef.handler.CefLoadHandlerAdapter
-import org.jetbrains.research.ml.tasktracker.server.*
+import org.jetbrains.research.ml.tasktracker.server.PluginServer
 import org.jetbrains.research.ml.tasktracker.ui.MainController
 import org.jetbrains.research.ml.tasktracker.ui.controllers.TaskSolvingController
 import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
