@@ -22,6 +22,7 @@
         <postStartupActivity implementation="org.jetbrains.research.ml.tasktracker.InitActivity"/>
         <toolWindow id="TaskTracker" anchor="right" factoryClass="org.jetbrains.research.ml.tasktracker.ui.PluginToolWindowFactory"/>
         <errorHandler implementation="org.jetbrains.research.ml.tasktracker.reporting.GitHubErrorReporter"/>
+        <daemon.highlightInfoFilter implementation="org.jetbrains.research.ml.tasktracker.services.CustomHighlightInfoFilter"/>
         <writingAccessProvider implementation="org.jetbrains.research.ml.tasktracker.tracking.PluginAccessProvider"/>
     </extensions>
     <actions>
