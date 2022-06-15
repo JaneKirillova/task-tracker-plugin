@@ -35,10 +35,10 @@ button:hover {
     width: 300%;
     height: 100%;
     background: #a64bf4;
-    background: -webkit-linear-gradient(left, #00dbde, #fc00ff, #00dbde, #fc00ff);
-    background: -o-linear-gradient(left, #00dbde, #fc00ff, #00dbde, #fc00ff);
-    background: -moz-linear-gradient(left, #00dbde, #fc00ff, #00dbde, #fc00ff);
-    background: linear-gradient(left, #00dbde, #fc00ff, #00dbde, #fc00ff);
+    background: -webkit-linear-gradient(left, #7017b9, #a80a1f, #7017b9, #a80a1f);
+    background: -o-linear-gradient(left, #641aa4, #9a071b, #641aa4, #8f0519);
+    background: -moz-linear-gradient(left, #641aa4, #9a071b, #641aa4, #8f0519);
+    background: linear-gradient(left, #641aa4, #9a071b, #641aa4, #8f0519);
     top: 0;
     left: -100%;
 

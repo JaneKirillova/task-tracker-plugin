@@ -22,7 +22,7 @@ import org.jetbrains.research.ml.tasktracker.ui.util.CustomSchemeHandlerFactory
  * Stores jbCefBrowser and project in which it was created
  */
 class BrowserView(val project: Project) : SimpleToolWindowPanel(true, true) {
-    var state = ViewState.GREETING
+    var state = ViewState.AGREEMENT
     val taskController by lazy {
         TaskSolvingController(PluginServer.tasks, this)
     }

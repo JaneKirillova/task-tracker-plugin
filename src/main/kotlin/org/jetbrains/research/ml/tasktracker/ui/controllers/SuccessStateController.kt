@@ -17,6 +17,10 @@ class SuccessStateController {
     fun updateViewContent(view: BrowserView) {
         logger.info("View loaded with ${view.state} state")
         when (view.state) {
+            ViewState.AGREEMENT -> {
+                view.updateViewByUrl("http://tasktracker/AgreementPage.html")
+                setAgreementAction(view)
+            }
             ViewState.GREETING -> {
                 view.updateViewByUrl("http://tasktracker/GreetingPage.html")
                 setGreetingAction(view)
@@ -60,6 +64,21 @@ class SuccessStateController {
                 view.updateViewByUrl("http://tasktracker/FinalPage.html")
                 setFinalAction(view)
             }
+        }
+    }
+
+    private fun setAgreementAction(view: BrowserView) {
+        view.executeJavascript(
+            """
+                            var nextButton = document.getElementById('next-button');
+                            nextButton.onclick = function () {
+                            if (checkInputFields()) {
+                            var userInfo = "agreed to the terms";
+                            """, """}}""", "userInfo"
+        ) {
+            view.state = ViewState.GREETING
+            updateViewContent(view)
+            null
         }
     }
 
@@ -160,7 +179,7 @@ class SuccessStateController {
         view.executeJavascript(
             """
                             var outputField = document.getElementById('factors-output');
-                            outputField.textContent = "${getSurveyFactors(SurveyData.form).joinToString(", ")}"
+                            outputField.textContent = "${getSurveyFactors(SurveyData.form).joinToString(", ")}."
             """, "", ""
         ) { null }
     }

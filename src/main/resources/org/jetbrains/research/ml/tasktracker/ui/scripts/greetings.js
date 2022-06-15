@@ -1,9 +1,4 @@
 function checkInputFields() {
-    var checked = document.getElementById('agreement').checked;
-    if (!checked) {
-        alert("Please select \"I agree to terms\" to submit.");
-        return false;
-    }
     var nameField = document.getElementById('name-field').value
     if (nameField === "") {
         alert("Incorrect Name")

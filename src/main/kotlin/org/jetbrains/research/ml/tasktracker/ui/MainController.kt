@@ -44,7 +44,7 @@ internal object MainController {
                                 errorStateController.updateViewContent(view)
                                 errorStateController.setOnRefreshAction(view) {
                                     when (view.state) {
-                                        ViewState.GREETING -> {
+                                        ViewState.AGREEMENT -> {
                                             PluginServer.reconnect(view.project)
                                         }
                                         else -> {

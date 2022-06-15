@@ -2,8 +2,10 @@ html {
     width: 60%;
     height: 100%;
     margin: 0;
-    padding: 15px;
-    background: dodgerblue linear-gradient(22deg, aqua, dodgerblue, deeppink) fixed;
+    padding: 10px 10px;
+    background: #c31432;
+    background: -webkit-linear-gradient(to top right, #240b36, #c31432) fixed;
+    background: linear-gradient(to top right, #240b36, #c31432) fixed;
     color: white;
     font: normal 18px/1.6 system-ui, sans-serif;
 }

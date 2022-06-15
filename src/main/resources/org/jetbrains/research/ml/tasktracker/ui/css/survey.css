@@ -3,7 +3,9 @@ html {
     height: 100%;
     margin: 0;
     padding: 15px;
-    background: dodgerblue linear-gradient(22deg, aqua, dodgerblue, deeppink) fixed;
+    background: #c31432;
+    background: -webkit-linear-gradient(to top right, #240b36, #c31432) fixed;
+    background: linear-gradient(to top right, #240b36, #c31432) fixed;
     color: white;
     font: normal 14px/1.6 system-ui, sans-serif;
 }

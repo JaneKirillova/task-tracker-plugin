@@ -1,5 +1,5 @@
 .pure-material-textfield-outlined {
-    --pure-material-safari-helper1: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+    --pure-material-safari-helper1: rgb(var(--pure-material-primary-rgb, 255,255,255)); /*он фокус*/
     position: relative;
     display: inline-block;
     padding-top: 6px;
@@ -14,19 +14,19 @@
     box-sizing: border-box;
     margin: 0;
     border: solid 1px; /* Safari */
-    border-color: rgba(var(--pure-material-onsurface-rgb, 33, 150, 243), 0.6);
+    border-color: rgba(var(--pure-material-onsurface-rgb, 255,255,255), 0.6);
     border-top-color: transparent;
     border-radius: 4px;
     padding: 15px 13px 15px;
     width: 100%;
     height: inherit;
-    color: rgba(var(--pure-material-onsurface-rgb, 33, 150, 243), 0.87);
+    color: rgba(var(--pure-material-onsurface-rgb, 255,255,255), 0.87);
     background-color: transparent;
     box-shadow: none; /* Firefox */
     font-family: inherit;
     font-size: 16px;
     line-height: inherit;
-    caret-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+    caret-color: rgb(var(--pure-material-primary-rgb, 255,255,255));
     transition: border 0.2s, box-shadow 0.2s;
 }
 
@@ -37,10 +37,10 @@
     top: 0;
     left: 0;
     display: flex;
-    border-color: rgba(var(--pure-material-onsurface-rgb, 33, 150, 243), 0.6);
+    border-color: rgba(var(--pure-material-onsurface-rgb, 255,255,255), 0.6);
     width: 100%;
     max-height: 100%;
-    color: rgba(var(--pure-material-onsurface-rgb, 33, 150, 243), 0.6);
+    color: rgba(var(--pure-material-onsurface-rgb, 255,255,255), 0.6);
     font-size: 75%;
     line-height: 15px;
     cursor: text;
@@ -57,7 +57,7 @@
     box-sizing: border-box;
     margin-top: 6px;
     border-top: solid 1px;
-    border-top-color: rgba(var(--pure-material-onsurface-rgb, 33, 150, 243), 0.6);
+    border-top-color: rgba(var(--pure-material-onsurface-rgb, 255,255,255), 0.6);
     min-width: 10px;
     height: 8px;
     pointer-events: none;
@@ -83,7 +83,7 @@
 /* Hover */
 .pure-material-textfield-outlined:hover > input,
 .pure-material-textfield-outlined:hover > textarea {
-    border-color: rgba(var(--pure-material-onsurface-rgb, 33, 150, 243), 0.87);
+    border-color: rgba(var(--pure-material-onsurface-rgb, 255,255,255), 0.87);
     border-top-color: transparent;
 }
 
@@ -91,18 +91,18 @@
 .pure-material-textfield-outlined:hover > textarea + span::before,
 .pure-material-textfield-outlined:hover > input + span::after,
 .pure-material-textfield-outlined:hover > textarea + span::after {
-    border-top-color: rgba(var(--pure-material-onsurface-rgb, 33, 150, 243), 0.87);
+    border-top-color: rgba(var(--pure-material-onsurface-rgb, 255,255,255), 0.87);
 }
 
 .pure-material-textfield-outlined:hover > input:not(:focus):placeholder-shown,
 .pure-material-textfield-outlined:hover > textarea:not(:focus):placeholder-shown {
-    border-color: rgba(var(--pure-material-onsurface-rgb,33, 150, 243), 0.87);
+    border-color: rgba(var(--pure-material-onsurface-rgb,255,255,255), 0.87);
 }
 
 /* Placeholder-shown */
 .pure-material-textfield-outlined > input:not(:focus):placeholder-shown,
 .pure-material-textfield-outlined > textarea:not(:focus):placeholder-shown {
-    border-top-color: rgba(var(--pure-material-onsurface-rgb, 33, 150, 243), 0.6);
+    border-top-color: rgba(var(--pure-material-onsurface-rgb, 255,255,255), 0.6);
 }
 
 .pure-material-textfield-outlined > input:not(:focus):placeholder-shown + span,
@@ -121,7 +121,7 @@
 /* Focus */
 .pure-material-textfield-outlined > input:focus,
 .pure-material-textfield-outlined > textarea:focus {
-    border-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+    border-color: rgb(var(--pure-material-primary-rgb, 255,255,255));
     border-top-color: transparent;
     box-shadow: inset 1px 0 var(--pure-material-safari-helper1), inset -1px 0 var(--pure-material-safari-helper1), inset 0 -1px var(--pure-material-safari-helper1);
     outline: none;
@@ -129,7 +129,7 @@
 
 .pure-material-textfield-outlined > input:focus + span,
 .pure-material-textfield-outlined > textarea:focus + span {
-    color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+    color: rgb(var(--pure-material-primary-rgb, 255,255,255));
 }
 
 .pure-material-textfield-outlined > input:focus + span::before,
@@ -145,9 +145,9 @@
 .pure-material-textfield-outlined > input:disabled + span,
 .pure-material-textfield-outlined > textarea:disabled,
 .pure-material-textfield-outlined > textarea:disabled + span {
-    border-color: rgba(var(--pure-material-onsurface-rgb, 33, 150, 243), 0.38) !important;
+    border-color: rgba(var(--pure-material-onsurface-rgb, 255,255,255), 0.38) !important;
     border-top-color: transparent !important;
-    color: rgba(var(--pure-material-onsurface-rgb, 33, 150, 243), 0.38);
+    color: rgba(var(--pure-material-onsurface-rgb,255,255,255), 0.38);
     pointer-events: none;
 }
 
@@ -155,14 +155,14 @@
 .pure-material-textfield-outlined > input:disabled + span::after,
 .pure-material-textfield-outlined > textarea:disabled + span::before,
 .pure-material-textfield-outlined > textarea:disabled + span::after {
-    border-top-color: rgba(var(--pure-material-onsurface-rgb, 33, 150, 243), 0.38) !important;
+    border-top-color: rgba(var(--pure-material-onsurface-rgb, 255,255,255), 0.38) !important;
 }
 
 .pure-material-textfield-outlined > input:disabled:placeholder-shown,
 .pure-material-textfield-outlined > input:disabled:placeholder-shown + span,
 .pure-material-textfield-outlined > textarea:disabled:placeholder-shown,
 .pure-material-textfield-outlined > textarea:disabled:placeholder-shown + span {
-    border-top-color: rgba(var(--pure-material-onsurface-rgb,33, 150, 243), 0.38) !important;
+    border-top-color: rgba(var(--pure-material-onsurface-rgb, 255,255,255), 0.38) !important;
 }
 
 .pure-material-textfield-outlined > input:disabled:placeholder-shown + span::before,
@@ -173,7 +173,7 @@
 }
 
 /* Faster transition in Safari for less noticable fractional font-size issue */
-@media not all and (min-resolution:.001dpcm) {
+@media not all and (min-resolution: .001dpcm) {
     @supports (-webkit-appearance:none) {
         .pure-material-textfield-outlined > input,
         .pure-material-textfield-outlined > input + span,
