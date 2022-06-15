@@ -157,8 +157,8 @@ object TaskFileHandler {
         } else {
             // If the old document is not equal to the old document, we should raise an error
             if (virtualFile != oldVirtualFile) {
-                val message = "${Plugin.PLUGIN_NAME}: an attempt to assign another virtualFile to the task $task in " +
-                        "the project ${project}."
+                val message =
+                    "${Plugin.PLUGIN_NAME}: an attempt to assign another virtualFile to the task $task in " + "the project ${project}."
                 logger.error(message)
                 throw IllegalArgumentException(message)
             }
@@ -209,7 +209,8 @@ object TaskFileHandler {
      */
     fun Task?.isItsFileWritable(): Boolean {
         //Is it possible to get project by virtual file and check state of view?
-        return true/*(this == null || this == MainController.taskController.currentSolvingTask)*/
+        return this == null || MainController.browserViews.filter { it.value.state == ViewState.TASK_SOLVING }
+            .any { it.value.taskController.currentSolvingTask == this@isItsFileWritable }
     }
 
 
