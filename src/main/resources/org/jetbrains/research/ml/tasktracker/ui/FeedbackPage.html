@@ -3,10 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Feedback</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/button.css">
     <style>
-        body {
-            padding: 15px;
-            width: 50%;
+        textarea {
+            border: #ffffff;
+            -webkit-transition: 0.2s;
+            transition: 0.2s;
+            outline: none;
+        }
+
+        textarea:focus {
+            border: #ffffff;
         }
     </style>
 </head>
@@ -16,8 +24,15 @@
     you have any specific “tricks” you use to ease your everyday life and work?
 </p>
 <div style="text-align: center">
-    <p><textarea rows="5" cols="50" name="Tricks" id="tricksField" placeholder="Your text"></textarea></p>
-    <button id="submit-button">Submit</button>
+    <p><textarea style="font: normal 18px/1.6 system-ui, sans-serif;border-radius: 7px; height: auto"
+                 rows="5" cols="50" name="Tricks" id="tricksField"
+                 placeholder="Please leave your feedback here"></textarea></p>
+</div>
+<div class="container-contact100-form-btn">
+    <div class="wrap-contact100-form-btn">
+        <div class="contact100-form-bgbtn"></div>
+        <button class="contact100-form-btn" id="submit-button"><span>Submit</span></button>
+    </div>
 </div>
 </body>
 </html>

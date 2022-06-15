@@ -3,36 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Greeting</title>
-    <script>
-        function checkInputFields() {
-            var checked = document.getElementById('agreement').checked;
-            if (!checked) {
-                alert("Please select \"I agree to terms\" to submit.");
-                return false;
-            }
-            var nameField = document.getElementById('nameField').value
-            if (nameField === "") {
-                alert("Incorrect Name")
-                return false
-            }
-            var validEmailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-            var emailField = document.getElementById('emailField').value
-            if (!emailField.match(validEmailRegex)) {
-                alert("Incorrect Email")
-                return false
-            }
-            return true
-        }
-    </script>
-    <style>
-        body {
-            padding: 15px;
-            width: 50%;
-        }
-    </style>
+    <link rel="stylesheet" href="css/button.css">
+    <link rel="stylesheet" href="css/input.css">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="scripts/greetings.js"></script>
 </head>
 <body>
 <div>
+    <i>Please, put your IDE into fullscreen mode.</i>
     <h2>Greetings from JetBrains!</h2>
     <h3>Thank you for your interest and participation in our research!</h3>
     <p> It consists of two steps:</p>
@@ -42,16 +20,33 @@
         <li>a 20-minutes step with several programming tasks in Python language to solve.</li>
     </ul>
     <p> We kindly ask you to read and submit the following consent to proceed with the research:
-        <a href="https://docs.google.com/document/d/1NT-dxzes6CaE68zEtJcHAdXTphMnRNEmDxIx6SVfHiI/edit#" target="_blank">
-            “TEXT OF THE CONSENT”</a>
     </p>
     <div style="text-align: center">
         <input style="margin-bottom:15px;" type="checkbox" name="agreement" id="agreement"/>
-        <label style="margin-bottom:15px;" for="agreement">I agree to terms</label><br>
-        <input style="margin-bottom:10px;" type="text" name="name" id="nameField" placeholder="name"><br>
-        <input style="margin-bottom:10px;" type="email" name="email" id="emailField" placeholder="example@email.com"><br>
-        <button id="submit-button">Submit</button>
+        <label style="margin-bottom:15px;" for="agreement">I agree to <a
+                href="https://docs.google.com/document/d/1NT-dxzes6CaE68zEtJcHAdXTphMnRNEmDxIx6SVfHiI/edit#"
+                target="_blank"
+                rel="noopener noreferrer">terms</a>
+        </label><br>
+
+        <label class="pure-material-textfield-outlined">
+            <input style="color:rgb( 33, 150, 243); background: white" placeholder=" " type="text" name="name"
+                   id="name-field">
+            <span>Your name</span>
+        </label>
+        <label class="pure-material-textfield-outlined">
+            <input style="color:rgb( 33, 150, 243); background: white" placeholder=" " type="email" name="email"
+                   id="email-field">
+            <span>Example@email.com</span>
+        </label>
+        <div class="container-contact100-form-btn">
+            <div class="wrap-contact100-form-btn">
+                <div class="contact100-form-bgbtn"></div>
+                <button class="contact100-form-btn" id="submit-button"><span>Submit</span></button>
+            </div>
+        </div>
     </div>
 </div>
 </body>
 </html>
+
