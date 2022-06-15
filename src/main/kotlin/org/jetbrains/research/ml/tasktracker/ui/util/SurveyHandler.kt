@@ -14,7 +14,7 @@ fun getSurveyFactors(answers: List<Int>): List<String> {
     val factorsSumList = answers.chunked(4).map { it.sum() } zip factorsList
     val factors = factorsSumList.filter { it.first > CONTROL_SUM }.map { it.second }
     if (factors.isEmpty()) {
-        return listOf("attention, but they don't affect your life so much.")
+        return listOf("attention, but they don't affect your life so much")
     }
     return factors
 }
