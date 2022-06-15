@@ -34,13 +34,13 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
                 }
 
                 it.ideSettings?.actionsToToggle?.forEach { action ->
-                    if (appliedActions[action]?.rem(2) == 0) {
+                    if (appliedActions[action]?.rem(2) != 1) {
                         logger.info("Toggle $action")
                         appliedActions[action] = appliedActions.getOrDefault(action, 0).inc()
                         executeIdeAction(action)
                     }
                 } ?: run {
-                    returnToDefaultActions()
+                    returnToDefaultActions(appliedActions["ToggleZenMode"] == 1)
                 }
                 //TODO update logic for it
                 val properties = it.ideSettings?.parameters ?: emptyMap()
@@ -68,12 +68,18 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
         }
     }
 
-    fun returnToDefaultActions() {
+    private fun returnToDefaultActions(isZenModed: Boolean = false) {
+        if (isZenModed) {
+            executeIdeAction("HideAllWindows")
+        }
         for ((action, usages) in appliedActions) {
             if (usages % 2 == 1) {
                 executeIdeAction(action)
                 appliedActions[action] = usages.inc()
             }
+        }
+        if (isZenModed) {
+            executeIdeAction("HideAllWindows")
         }
     }
 

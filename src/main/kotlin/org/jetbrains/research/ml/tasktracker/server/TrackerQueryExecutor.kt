@@ -33,8 +33,10 @@ object TrackerQueryExecutor : QueryExecutor() {
         val requestBody = ByteArray(0).toRequestBody(null, 0, 0)
         val request = Request.Builder().url(currentUrl).post(requestBody).build()
         val response = executeQuery(request)?.body?.string() ?: throw IllegalStateException("Incorrect server response")
+        logger.info(response)
         val userInfo = decodeFromString(UserInfo.serializer(), response)
         userId = userInfo.id.toString()
+        logger.info(userInfo.toString())
         userId?.let { PluginServer.filterTasks(userInfo.taskOrder) }
     }
 
