@@ -123,12 +123,11 @@ object PluginServer {
         tasks = receiveTasks()
     }
 
-    fun filterTasks(id: Int) {
-        tasks = if (id % 2 == 0) {
-            tasks.filter { it.isExperimental }
-        } else {
-            tasks.filter { !it.isExperimental }
-        }
+    fun filterTasks(taskOrder: List<Int>) {
+        val filteredTasks = mutableListOf<Task>()
+        taskOrder.forEach { filteredTasks.add(tasks[it]) }
+        logger.info(filteredTasks.toString())
+        tasks = filteredTasks
     }
 
     private fun receiveProgrammingLanguages(): List<Language> {

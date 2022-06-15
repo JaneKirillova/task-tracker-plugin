@@ -1,6 +1,7 @@
 package org.jetbrains.research.ml.tasktracker.server
 
 import com.intellij.openapi.application.PathManager
+import kotlinx.serialization.json.Json.Default.decodeFromString
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -9,6 +10,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.jetbrains.research.ml.tasktracker.Plugin
 import org.jetbrains.research.ml.tasktracker.models.Extension
+import org.jetbrains.research.ml.tasktracker.models.UserInfo
 import org.jetbrains.research.ml.tasktracker.tracking.ActivityTrackerFileHandler
 import java.io.File
 import java.io.PrintWriter
@@ -30,9 +32,10 @@ object TrackerQueryExecutor : QueryExecutor() {
         logger.info("${Plugin.PLUGIN_NAME}: ...generating user id")
         val requestBody = ByteArray(0).toRequestBody(null, 0, 0)
         val request = Request.Builder().url(currentUrl).post(requestBody).build()
-        userId = executeQuery(request)?.body?.string() ?: throw IllegalStateException("Incorrect server response")
-        //TODO: uncomment filtering
-        /*userId?.let { PluginServer.filterTasks(it.toInt()) }*/
+        val response = executeQuery(request)?.body?.string() ?: throw IllegalStateException("Incorrect server response")
+        val userInfo = decodeFromString(UserInfo.serializer(), response)
+        userId = userInfo.id.toString()
+        userId?.let { PluginServer.filterTasks(userInfo.taskOrder) }
     }
 
     private fun getRequestForFeedbackQuery(urlSuffix: String, feedback: String?, id: String?): Request {

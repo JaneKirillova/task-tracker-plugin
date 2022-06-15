@@ -63,7 +63,7 @@ object ActivityTrackerFileHandler {
     }
 
     private fun clearFilesPaths(df: DataFrame): DataFrame {
-        val tasks = PluginServer.tasks.joinToString(separator = "|") { it.key }
+        val tasks = PluginServer.tasks.joinToString(separator = "|") { it.key.toString() }
         val languages = Language.values().joinToString(separator = "|") { it.name.toLowerCase() }
         val extensions = Extension.values().joinToString(separator = "|") { it.ext.toLowerCase() }
         val tasksMatchCondition = ".*/$PLUGIN_FOLDER/($languages)/($tasks)($extensions)".toRegex(

@@ -10,9 +10,9 @@ data class Settings(val actionsToToggle: List<String>, val parameters: Map<Strin
 @Suppress("PROVIDED_RUNTIME_TOO_LOW")
 @Serializable
 data class Task(
-    override val key: String,
+    val key: Int,
     val id: Int = -1,
     val isExperimental: Boolean,
     val description: JsonObject,
-    val ideSettings: Settings
-) : Keyed
+    val ideSettings: Settings? = null
+)

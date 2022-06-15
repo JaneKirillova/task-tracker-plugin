@@ -9,6 +9,7 @@ import java.io.File
 import java.io.PrintWriter
 
 
+/*
 object StoredInfoHandler {
 
     val logger: Logger = Logger.getInstance(javaClass)
@@ -35,9 +36,11 @@ object StoredInfoHandler {
     }
 }
 
+*/
 /*
     This class provides storing survey info and activity tracker key
- */
+ *//*
+
 object StoredInfoWrapper {
 
     private const val storedInfoFileName = "storedInfo.txt"
@@ -77,3 +80,4 @@ object StoredInfoWrapper {
         writer.close()
     }
 }
+*/
