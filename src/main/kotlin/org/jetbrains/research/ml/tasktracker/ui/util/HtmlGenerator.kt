@@ -85,10 +85,10 @@ class HtmlGenerator {
                 form {
                     table {
                         attributes["cellspacing"] = "10"
-                        attributes["width"] = "100%"
+                        attributes["width"] = "105%"
                         tr {
                             th {
-                                attributes["style"] = "width:60;"
+                                attributes["style"] = "width:10;"
                                 text("Question")
                             }
                             th { text("Never or rarely") }
