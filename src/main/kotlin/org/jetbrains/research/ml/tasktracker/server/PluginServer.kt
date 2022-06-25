@@ -126,7 +126,6 @@ object PluginServer {
     fun filterTasks(taskOrder: List<Int>) {
         val filteredTasks = mutableListOf<Task>()
         taskOrder.forEach { filteredTasks.add(tasks[it]) }
-        logger.info(filteredTasks.toString())
         tasks = filteredTasks
     }
 
@@ -196,7 +195,7 @@ object PluginServer {
         ApplicationManager.getApplication().invokeAndWait {
             val document = TaskFileHandler.getDocument(project, task)
             ProgressManager.getInstance()
-                .run(object : Backgroundable(project, "Sending task ${task.key} solution", false) {
+                .run(object : Backgroundable(project, "Sending data of ${task.key}.ipynb", false) {
                     override fun run(indicator: ProgressIndicator) {
                         sendFileByDocument(document)
                     }
