@@ -103,7 +103,7 @@ object DocumentLogger {
     private val myDocumentsToPrinters: HashMap<Document, DocumentLogPrinter> = HashMap()
 
     fun log(document: Document) {
-        val docPrinter = myDocumentsToPrinters.getOrPut(document, { DocumentLogPrinter() })
+        val docPrinter = myDocumentsToPrinters.getOrPut(document) { DocumentLogPrinter() }
         val logPrinter = docPrinter.getActiveLogPrinter(document)
         logPrinter.csvPrinter.printRecord(DocumentLoggedData.getData(document) + UiLoggedData.getData(Unit))
     }
