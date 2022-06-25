@@ -109,7 +109,7 @@ object TrackerQueryExecutor : QueryExecutor() {
         )
     }
 
-    private fun clearActivityTrackerFile() {
+    fun clearActivityTrackerFile() {
         val file = File(activityTrackerPath)
         val writer = PrintWriter(file)
         writer.print("")
@@ -128,7 +128,6 @@ object TrackerQueryExecutor : QueryExecutor() {
                     updateUserData(it, activityTrackerKey)
                 } ?: error("Unsuccessful server response")
             }
-            clearActivityTrackerFile()
         }
     }
 }

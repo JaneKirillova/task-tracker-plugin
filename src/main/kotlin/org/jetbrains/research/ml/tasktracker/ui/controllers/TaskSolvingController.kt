@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.wm.ToolWindowManager
 import org.jetbrains.research.ml.tasktracker.models.Task
 import org.jetbrains.research.ml.tasktracker.server.PluginServer
+import org.jetbrains.research.ml.tasktracker.server.TrackerQueryExecutor
 import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
 import org.jetbrains.research.ml.tasktracker.ui.MainController
 import org.jetbrains.research.ml.tasktracker.ui.view.BrowserView
@@ -104,6 +105,7 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
             }
             return false
         }
+        TrackerQueryExecutor.clearActivityTrackerFile()
         return true
     }
 

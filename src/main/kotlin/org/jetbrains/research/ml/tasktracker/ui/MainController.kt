@@ -74,7 +74,7 @@ internal object MainController {
                             }
                             DataSendingResult.FAIL -> {
                                 when (view.state) {
-                                    ViewState.FEEDBACK -> {
+                                    ViewState.FINAL -> {
                                         errorStateController.updateViewContent(view)
                                         errorStateController.setOnRefreshAction(view) {
                                             PluginServer.sendFeedback(
@@ -85,7 +85,7 @@ internal object MainController {
                                     }
                                     else -> {
                                         errorStateController.updateViewContent(view)
-                                        errorStateController.setOnRefreshAction(view) {
+                                        errorStateController.setOnRefreshActionWithFailedSend(view) {
                                             logger.info("${Plugin.PLUGIN_NAME} on sending tasks connection failed. Try to resend")
                                             view.taskController.resendLastTask()
                                             null
