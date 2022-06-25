@@ -150,7 +150,7 @@ class SuccessStateController {
             ApplicationManager.getApplication().invokeLater {
                 TaskFileHandler.initProject(view.project)
             }
-            view.taskController.executeIdeAction("HideAllWindows")
+            view.taskController.hideToolWindow("TaskTracker")
             view.taskController.startNextTask()
             view.state = ViewState.TASK_SOLVING
             updateViewContent(view)

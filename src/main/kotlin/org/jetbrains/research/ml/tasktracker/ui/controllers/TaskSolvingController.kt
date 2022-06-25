@@ -4,6 +4,7 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.wm.ToolWindowManager
 import org.jetbrains.research.ml.tasktracker.models.Task
 import org.jetbrains.research.ml.tasktracker.server.PluginServer
 import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
@@ -40,7 +41,8 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
                         executeIdeAction(action)
                     }
                 } ?: run {
-                    returnToDefaultActions(appliedActions["ToggleZenMode"] == 1)
+                    returnToDefaultActions()
+                    showToolWindow("Project")
                 }
                 //TODO update logic for it
                 val properties = it.ideSettings?.parameters ?: emptyMap()
@@ -68,26 +70,20 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
         }
     }
 
-    private fun returnToDefaultActions(isZenModed: Boolean = false) {
-        if (isZenModed) {
-            executeIdeAction("HideAllWindows")
-        }
+    private fun returnToDefaultActions() {
         for ((action, usages) in appliedActions) {
             if (usages % 2 == 1) {
                 executeIdeAction(action)
                 appliedActions[action] = usages.inc()
             }
         }
-        if (isZenModed) {
-            executeIdeAction("HideAllWindows")
-        }
     }
 
     private fun finishSolvingState() {
         logger.info("Solution Completed. Start uploading solutions.")
-        executeIdeAction("HideAllWindows")
 
         returnToDefaultActions()
+        showToolWindow("TaskTracker")
 
         isAllTasksSentOrSendNext()
         view.state = ViewState.FEEDBACK
@@ -111,11 +107,23 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
         return true
     }
 
-    fun executeIdeAction(actionId: String) {
+    private fun executeIdeAction(actionId: String) {
         ApplicationManager.getApplication().invokeLater {
             ActionManager.getInstance().getAction(actionId)?.let { action ->
                 ActionManager.getInstance().tryToExecute(action, null, null, null, true)
             }
+        }
+    }
+
+    private fun showToolWindow(id: String) {
+        ApplicationManager.getApplication().invokeLater {
+            ToolWindowManager.getInstance(view.project).getToolWindow(id)?.show()
+        }
+    }
+
+    fun hideToolWindow(id: String) {
+        ApplicationManager.getApplication().invokeLater {
+            ToolWindowManager.getInstance(view.project).getToolWindow(id)?.hide()
         }
     }
 }
