@@ -25,6 +25,11 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
         private set
     private var currentSendingTask: Task? = null
 
+    fun startSolving() {
+        hideToolWindow("TaskTracker")
+        startNextTask()
+    }
+
     fun startNextTask() {
         if (taskIterator.hasNext()) {
             currentSolvingTask = taskIterator.next()
@@ -123,7 +128,7 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
         }
     }
 
-    fun hideToolWindow(id: String) {
+    private fun hideToolWindow(id: String) {
         ApplicationManager.getApplication().invokeLater {
             ToolWindowManager.getInstance(view.project).getToolWindow(id)?.hide()
         }

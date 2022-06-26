@@ -150,8 +150,7 @@ class SuccessStateController {
             ApplicationManager.getApplication().invokeLater {
                 TaskFileHandler.initProject(view.project)
             }
-            view.taskController.hideToolWindow("TaskTracker")
-            view.taskController.startNextTask()
+            view.taskController.startSolving()
             view.state = ViewState.TASK_SOLVING
             updateViewContent(view)
             null
