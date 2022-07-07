@@ -23,6 +23,8 @@
         <toolWindow id="TaskTracker" anchor="right" factoryClass="org.jetbrains.research.ml.tasktracker.ui.PluginToolWindowFactory"/>
         <errorHandler implementation="org.jetbrains.research.ml.tasktracker.reporting.GitHubErrorReporter"/>
         <daemon.highlightInfoFilter implementation="org.jetbrains.research.ml.tasktracker.services.CustomHighlightInfoFilter"/>
+        <highlightUsagesHandlerFactory implementation="org.jetbrains.research.ml.tasktracker.services.CustomHighlightUsagesHandlerFactory"/>
+        <completion.contributor  language="any" implementationClass="org.jetbrains.research.ml.tasktracker.services.CustomCompletionContributor" order="first"/>
         <writingAccessProvider implementation="org.jetbrains.research.ml.tasktracker.tracking.PluginAccessProvider"/>
     </extensions>
     <actions>
