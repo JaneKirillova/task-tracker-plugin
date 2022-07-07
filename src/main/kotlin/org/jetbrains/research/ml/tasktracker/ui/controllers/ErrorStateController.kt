@@ -23,7 +23,7 @@ class ErrorStateController {
         view.executeJavascript(
             """
                                  var textOutput = document.getElementById('text-output');
-                                 textOutput.textContent = "If you have already completed the research, but there is a problem, please send the files to @jetbrains.com from the activity-tracker and tasktracker folder that you can find at the following path"
+                                 textOutput.textContent = "If you have already completed the research, but there is a problem, please send the files to sergey.titov@jetbrains.com from the activity-tracker and tasktracker folder that you can find at the following path"
                                  var pathOutput = document.getElementById('path-output');
                                  pathOutput.textContent = "$path"
                                  var myButton = document.getElementById('refresh-button');

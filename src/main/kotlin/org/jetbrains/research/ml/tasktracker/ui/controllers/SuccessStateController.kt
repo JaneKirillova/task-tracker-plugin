@@ -9,6 +9,7 @@ import org.jetbrains.research.ml.tasktracker.ui.util.HtmlGenerator
 import org.jetbrains.research.ml.tasktracker.ui.util.SurveyData
 import org.jetbrains.research.ml.tasktracker.ui.util.getSurveyFactors
 import org.jetbrains.research.ml.tasktracker.ui.view.BrowserView
+import org.jetbrains.research.ml.tasktracker.ui.view.ViewState
 
 
 class SuccessStateController {
@@ -30,7 +31,7 @@ class SuccessStateController {
                     val listOfQuestions = it.surveyPane[PaneLanguage("en")]?.questions
                     view.updateViewByHtml(
                         HtmlGenerator().getSurveyPage(
-                            "Thank you for your decision to proceed with us. We are asking you to fill in the survey at this step. It consists of 20 questions and will take about 5 minutes to fill in.",
+                            "Thank you for deciding to proceed with us. Firstly, we are asking you to fill in the survey. It consists of 20 questions and will take about 5 minutes to fill in.",
                             listOfQuestions?.subList(0, listOfQuestions.size / 2) ?: emptyList()
                         ), "http://tasktracker/QuestionsFirstPage.html"
                     )
@@ -178,7 +179,7 @@ class SuccessStateController {
         view.executeJavascript(
             """
                             var outputField = document.getElementById('factors-output');
-                            outputField.textContent = "${getSurveyFactors(SurveyData.form).joinToString(", ")}."
+                            outputField.textContent = "${getSurveyFactors(SurveyData.form)}"
             """, "", ""
         ) { null }
     }
