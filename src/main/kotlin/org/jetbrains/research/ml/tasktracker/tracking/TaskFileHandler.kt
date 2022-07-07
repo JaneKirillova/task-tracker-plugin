@@ -25,7 +25,7 @@ import org.jetbrains.research.ml.tasktracker.models.Language
 import org.jetbrains.research.ml.tasktracker.models.Task
 import org.jetbrains.research.ml.tasktracker.server.PluginServer
 import org.jetbrains.research.ml.tasktracker.ui.MainController
-import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
+import org.jetbrains.research.ml.tasktracker.ui.view.ViewState
 import java.io.File
 import java.io.IOException
 

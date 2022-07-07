@@ -15,7 +15,6 @@ import org.cef.handler.CefLoadHandlerAdapter
 import org.jetbrains.research.ml.tasktracker.server.PluginServer
 import org.jetbrains.research.ml.tasktracker.ui.MainController
 import org.jetbrains.research.ml.tasktracker.ui.controllers.TaskSolvingController
-import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
 import org.jetbrains.research.ml.tasktracker.ui.util.CustomSchemeHandlerFactory
 
 /**

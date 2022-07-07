@@ -9,7 +9,7 @@ import org.jetbrains.research.ml.tasktracker.server.*
 import org.jetbrains.research.ml.tasktracker.ui.controllers.ErrorStateController
 import org.jetbrains.research.ml.tasktracker.ui.controllers.LoadingStateController
 import org.jetbrains.research.ml.tasktracker.ui.controllers.SuccessStateController
-import org.jetbrains.research.ml.tasktracker.ui.controllers.ViewState
+import org.jetbrains.research.ml.tasktracker.ui.view.ViewState
 import org.jetbrains.research.ml.tasktracker.ui.util.SurveyData
 import org.jetbrains.research.ml.tasktracker.ui.util.subscribe
 import org.jetbrains.research.ml.tasktracker.ui.view.BrowserView

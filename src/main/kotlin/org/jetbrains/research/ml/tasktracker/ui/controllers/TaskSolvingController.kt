@@ -11,6 +11,7 @@ import org.jetbrains.research.ml.tasktracker.server.TrackerQueryExecutor
 import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
 import org.jetbrains.research.ml.tasktracker.ui.MainController
 import org.jetbrains.research.ml.tasktracker.ui.view.BrowserView
+import org.jetbrains.research.ml.tasktracker.ui.view.ViewState
 
 class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
     private val logger: Logger = Logger.getInstance(javaClass)
@@ -24,6 +25,8 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
     var currentSolvingTask: Task? = null
         private set
     private var currentSendingTask: Task? = null
+
+    fun isZenModded() = appliedActions["ToggleZenMode"]?.rem(2) == 1
 
     fun startSolving() {
         hideToolWindow("TaskTracker")
