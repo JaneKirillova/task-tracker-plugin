@@ -148,6 +148,6 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
     }
 
     companion object {
-        private const val BUTTON_COOLDOWN = 5
+        private const val BUTTON_COOLDOWN = 15
     }
 }
