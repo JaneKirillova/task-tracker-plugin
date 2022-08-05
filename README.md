@@ -21,7 +21,8 @@ when the plugin starts.
 
 Currently TaskTracker is available in English and Russian.
 
-<img src="https://github.com/JetBrains-Research/task-tracker-plugin/blob/master/readme-img/codetracker.gif" width="250">
+<img src="https://github.com/JetBrains-Research/task-tracker-plugin/blob/revival/readme-img/greetings.png" width="250">
+<img src="https://github.com/JetBrains-Research/task-tracker-plugin/blob/revival/readme-img/before-start.png" width="250">
 
 ## Privacy
 

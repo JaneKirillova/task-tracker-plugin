@@ -13,6 +13,8 @@ import org.jetbrains.research.ml.tasktracker.tracking.TaskFileHandler
 import org.jetbrains.research.ml.tasktracker.ui.MainController
 import org.jetbrains.research.ml.tasktracker.ui.view.BrowserView
 import org.jetbrains.research.ml.tasktracker.ui.view.ViewState
+import org.joda.time.DateTime
+import org.joda.time.Seconds
 
 class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
     private val logger: Logger = Logger.getInstance(javaClass)
@@ -26,8 +28,12 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
     var currentSolvingTask: Task? = null
         private set
     private var currentSendingTask: Task? = null
+    private var lastTaskStartTime = DateTime.now()
 
     fun isZenModded() = appliedActions["ToggleZenMode"]?.rem(2) == 1
+
+    fun checkCooldown() =
+        Seconds.secondsBetween(lastTaskStartTime, DateTime.now()).seconds > BUTTON_COOLDOWN
 
     fun startSolving() {
         hideToolWindow("TaskTracker")
@@ -36,6 +42,7 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
 
     fun startNextTask() {
         if (taskIterator.hasNext()) {
+            lastTaskStartTime = DateTime.now()
             currentSolvingTask = taskIterator.next()
             logger.info("Start solving ${currentSolvingTask?.key}")
 
@@ -138,5 +145,9 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
         ApplicationManager.getApplication().invokeLater {
             ToolWindowManager.getInstance(view.project).getToolWindow(id)?.hide()
         }
+    }
+
+    companion object {
+        private const val BUTTON_COOLDOWN = 5
     }
 }
