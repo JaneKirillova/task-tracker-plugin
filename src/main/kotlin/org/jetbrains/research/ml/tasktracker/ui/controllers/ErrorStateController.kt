@@ -1,10 +1,13 @@
 package org.jetbrains.research.ml.tasktracker.ui.controllers
 
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.ui.jcef.JBCefJSQuery
 import org.jetbrains.research.ml.tasktracker.ui.view.BrowserView
 
 class ErrorStateController {
+    private val logger: Logger = Logger.getInstance(javaClass)
+
     fun updateViewContent(view: BrowserView) {
         view.updateViewByUrl("http://tasktracker/ErrorPage.html")
     }
@@ -20,6 +23,7 @@ class ErrorStateController {
 
     fun setOnRefreshActionWithFailedSend(view: BrowserView, action: (String) -> JBCefJSQuery.Response?) {
         val path = PathManager.getPluginsPath().replace("/", "//").replace("\\", "\\\\")
+        logger.info("TT results: $path")
         view.executeJavascript(
             """
                                  var textOutput = document.getElementById('text-output');

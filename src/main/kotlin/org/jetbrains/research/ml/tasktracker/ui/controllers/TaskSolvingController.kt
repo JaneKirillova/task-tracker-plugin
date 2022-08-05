@@ -4,6 +4,7 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import org.jetbrains.research.ml.tasktracker.models.Task
 import org.jetbrains.research.ml.tasktracker.server.PluginServer
@@ -51,7 +52,8 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
                     }
                 } ?: run {
                     returnToDefaultActions()
-                    showToolWindow("Project")
+                    showToolWindow(ToolWindowId.PROJECT_VIEW)
+                    showToolWindow("Python Console")
                 }
                 //TODO update logic for it
                 val properties = it.ideSettings?.parameters ?: emptyMap()
@@ -93,6 +95,7 @@ class TaskSolvingController(tasks: List<Task>, private val view: BrowserView) {
 
         returnToDefaultActions()
         showToolWindow("TaskTracker")
+        hideToolWindow("Python Console")
 
         isAllTasksSentOrSendNext()
         view.state = ViewState.FEEDBACK
