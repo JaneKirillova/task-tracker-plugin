@@ -21,8 +21,8 @@ when the plugin starts.
 
 Currently TaskTracker is available in English and Russian.
 
-<img src="https://github.com/samorojy/task-tracker-plugin/blob/revival/readme-img/greetings.png" width="250">
-<img src="https://github.com/samorojy/task-tracker-plugin/blob/revival/readme-img/greetings.png" width="250">
+<img src="https://github.com/samorojy/task-tracker-plugin/blob/revival/readme-img/greetings.png" width="300">
+<img src="https://github.com/samorojy/task-tracker-plugin/blob/revival/readme-img/before-start.png" width="300">
 
 ## Privacy
 
