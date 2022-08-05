@@ -5,7 +5,7 @@ fun properties(key: String) = project.findProperty(key).toString()
 
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.6.0"
+    id("org.jetbrains.intellij") version "1.7.0"
 
     kotlin("jvm") version "1.6.20"
     kotlin("plugin.serialization") version "1.6.20"
@@ -59,28 +59,14 @@ dependencies {
     testImplementation("junit", "junit", "4.12")
 }
 
-/*
-   Uncomment for testing with Rider IDE
-*/
-//tasks.getByName<org.jetbrains.intellij.tasks.IntelliJInstrumentCodeTask>("instrumentCode") {
-//    setCompilerVersion("192.6817.32")
-//}
-//intellij {
-//    type = "RD"
-//    version = "2019.2-SNAPSHOT"
-//    downloadSources = false
-//    intellij.updateSinceUntilBuild = false
-//}
+tasks{
+    patchPluginXml{
+        version.set(project.version.toString())
+        sinceBuild.set(properties("pluginSinceBuild"))
+        untilBuild.set(properties("pluginUntilBuild"))
+    }
+}
 
-
-/*
-   Uncomment for testing with Intellij IDEA
-   Configure gradle-intellij-plugin plugin.
-   Read more: https://github.com/JetBrains/gradle-intellij-plugin
-
-intellij {
-    version.set(properties("platformVersion"))
-}*/
 
 configure<JavaPluginConvention> {
     sourceCompatibility = JavaVersion.VERSION_11
