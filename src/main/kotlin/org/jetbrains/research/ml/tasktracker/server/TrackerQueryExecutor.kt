@@ -1,6 +1,8 @@
 package org.jetbrains.research.ml.tasktracker.server
 
 import com.intellij.openapi.application.PathManager
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.Json.Default.decodeFromString
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -10,6 +12,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.jetbrains.research.ml.tasktracker.Plugin
 import org.jetbrains.research.ml.tasktracker.models.Extension
+import org.jetbrains.research.ml.tasktracker.models.Feedback
 import org.jetbrains.research.ml.tasktracker.models.UserInfo
 import org.jetbrains.research.ml.tasktracker.tracking.ActivityTrackerFileHandler
 import java.io.File
@@ -41,7 +44,7 @@ object TrackerQueryExecutor : QueryExecutor() {
     }
 
     private fun getRequestForFeedbackQuery(urlSuffix: String, feedback: String?, id: String?): Request {
-        val json = "{\"feedback\":\"$feedback\",\"id\":\"$id\"}"
+        val json = Json.encodeToString(Feedback(feedback, id))
         val body = json.toRequestBody("application/json".toMediaTypeOrNull())
         logger.info(body.toString())
         return Request.Builder().url(baseUrl + urlSuffix).method("POST", body).build()

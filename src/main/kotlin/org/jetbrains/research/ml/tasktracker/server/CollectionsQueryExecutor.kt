@@ -40,5 +40,4 @@ object CollectionsQueryExecutor : QueryExecutor() {
     private fun getResponse(url: String): Response? {
         return executeQuery(Request.Builder().url(URL("${baseUrl}${url}")).build())
     }
-
 }
