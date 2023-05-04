@@ -5,4 +5,6 @@ object SurveyData {
     var email = ""
     var form = emptyList<Int>()
     var feedback = ""
+    var years = ""
+    var use = ""
 }

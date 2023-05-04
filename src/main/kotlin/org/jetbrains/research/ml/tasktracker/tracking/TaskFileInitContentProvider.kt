@@ -6,8 +6,10 @@ import org.jetbrains.research.ml.tasktracker.models.Task
 object TaskFileInitContentProvider {
     const val PLUGIN_FOLDER = "tasktracker"
 
-    fun getLanguageFolderRelativePath(language: Language): String {
-        return "${PLUGIN_FOLDER}/${language.name.toLowerCase()}"
+    fun getLanguageFolderRelativePath(language: Language, task: Task): String {
+//        return "${PLUGIN_FOLDER}/${language.name.toLowerCase()}"
+        if (task.key <= 1) return "src/main/java/com/example/avl"
+        return "src/main/java/com/example/treap"
     }
 
     private fun getTaskComment(task: Task, language: Language): String {
@@ -30,7 +32,11 @@ object TaskFileInitContentProvider {
     }
 
     private fun getClassNameByTask(task: Task): String {
-        return "${task.key.toString().capitalize()}Class"
+        return if (task.key <= 1) {
+            "AVL"
+        } else {
+            "Treap"
+        }
     }
 
     fun getTaskFileName(task: Task, language: Language): String {
@@ -49,11 +55,7 @@ object TaskFileInitContentProvider {
                 //Mongoose database does not allow to store keys with dots
                 task.description.toString().replace("___",".")
             }
-            Language.JAVA -> comment + "public class ${getClassNameByTask(task)} {\n" +
-                    "    public static void main(String[] args) {\n" +
-                    "        // Write your code here\n" +
-                    "    }" +
-                    "\n}"
+            Language.JAVA -> task.description
             Language.KOTLIN -> comment +
                     "fun main() {\n" +
                     "    // Write tour code here\n" +

@@ -61,9 +61,13 @@ class SuccessStateController {
                 view.updateViewByUrl("http://tasktracker/FeedbackPage.html")
                 setFeedbackAction(view)
             }
+            ViewState.DATA -> {
+                view.updateViewByUrl("http://tasktracker/DataPage.html")
+                setDataAction(view)
+            }
             ViewState.FINAL -> {
                 view.updateViewByUrl("http://tasktracker/FinalPage.html")
-                setFinalAction(view)
+//                setFinalAction(view)
             }
         }
     }
@@ -77,7 +81,7 @@ class SuccessStateController {
                             var userInfo = "agreed to the terms";
                             """, """}}""", "userInfo"
         ) {
-            view.state = ViewState.GREETING
+            view.state = ViewState.DATA
             updateViewContent(view)
             null
         }
@@ -97,7 +101,7 @@ class SuccessStateController {
             val listOfUserData = it.split(',')
             SurveyData.name = listOfUserData[0]
             SurveyData.email = listOfUserData[1]
-            view.state = ViewState.QUESTIONS_FIRST
+            view.state = ViewState.DATA
             updateViewContent(view)
             null
         }
@@ -170,6 +174,29 @@ class SuccessStateController {
             SurveyData.feedback = it
             PluginServer.sendFeedback(it, view.project)
             view.state = ViewState.FINAL
+            updateViewContent(view)
+            null
+        }
+    }
+
+    private fun setDataAction(view: BrowserView) {
+        view.executeJavascript(
+                """
+                            var submitButton = document.getElementById('submit-button');
+                            submitButton.onclick = function () {
+                                var firstList = document.getElementById('firstdd')
+                                var value1 = firstList.value
+                                var secondList = document.getElementById('seconddd')
+                                var value2 = secondList.value
+                                var result = value1 + "," + value2
+            """, """}""", "result"
+        ) {
+            val answersList = it.split(",")
+            SurveyData.years = answersList[0]
+            logger.info("Abracadabra $it")
+            SurveyData.use = answersList[1]
+            PluginServer.reconnectUserId(view.project)
+            view.state = ViewState.PRE_TASK_SOLVING
             updateViewContent(view)
             null
         }

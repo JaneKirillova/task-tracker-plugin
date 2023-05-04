@@ -24,13 +24,17 @@ enum class UiLoggedDataHeader(val header: String) {
     Name("name"),
     Email("email"),
     Answers("answers"),
+    Experience("expiriense"),
+    Use("use"),
 }
 
 object UiLoggedData : LoggedData<Unit, String>() {
     override val loggedDataGetters: List<LoggedDataGetter<Unit, String>> = arrayListOf(
-        LoggedDataGetter(UiLoggedDataHeader.Name.header) { SurveyData.name },
-        LoggedDataGetter(UiLoggedDataHeader.Email.header) { SurveyData.email },
-        LoggedDataGetter(UiLoggedDataHeader.Answers.header) { SurveyData.form.toString()},
+//            LoggedDataGetter(UiLoggedDataHeader.Name.header) { SurveyData.name },
+//            LoggedDataGetter(UiLoggedDataHeader.Email.header) { SurveyData.email },
+//            LoggedDataGetter(UiLoggedDataHeader.Answers.header) { SurveyData.form.toString()},
+            LoggedDataGetter(UiLoggedDataHeader.Experience.header) { SurveyData.years },
+            LoggedDataGetter(UiLoggedDataHeader.Use.header) { SurveyData.use},
     )
 }
 

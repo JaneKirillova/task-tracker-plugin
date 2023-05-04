@@ -29,7 +29,7 @@ abstract class QueryExecutor {
     }
 
     // Base url for the TaskTracker server
-    protected val baseUrl: String = "http://localhost:3000/api/"
+    protected val baseUrl: String = "http://3.249.245.244:8888/api/"
 
     protected fun executeQuery(request: Request): Response? {
         var curCountAttempts = 0

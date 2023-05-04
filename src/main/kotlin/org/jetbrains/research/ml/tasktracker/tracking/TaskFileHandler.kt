@@ -51,8 +51,8 @@ object TaskFileHandler {
         projectToTaskToFiles[project] = hashMapOf()
         PluginServer.tasks.forEach { task ->
             ///TODO hardcoded jupyter((
-            Language.JUPYTER?.let {
-                val virtualFile = getOrCreateNotebookFile(project, task, it)
+            Language.JAVA?.let {
+                val virtualFile = getOrCreateFile(project, task, it)
                 virtualFile?.let {
                     addTaskFile(it, task, project)
                     ApplicationManager.getApplication().invokeAndWait {
@@ -103,7 +103,7 @@ object TaskFileHandler {
     }
 
     private fun getOrCreateNotebookFile(project: Project, task: Task, language: Language): VirtualFile? {
-        val relativeFilePath = TaskFileInitContentProvider.getLanguageFolderRelativePath(language)
+        val relativeFilePath = TaskFileInitContentProvider.getLanguageFolderRelativePath(language, task)
         ApplicationManager.getApplication().runWriteAction {
             addSourceFolder(relativeFilePath, ModuleManager.getInstance(project).modules.last())
         }
@@ -121,7 +121,7 @@ object TaskFileHandler {
     }
 
     private fun getOrCreateFile(project: Project, task: Task, language: Language): VirtualFile? {
-        val relativeFilePath = TaskFileInitContentProvider.getLanguageFolderRelativePath(language)
+        val relativeFilePath = TaskFileInitContentProvider.getLanguageFolderRelativePath(language, task)
         ApplicationManager.getApplication().runWriteAction {
             addSourceFolder(relativeFilePath, ModuleManager.getInstance(project).modules.last())
         }
