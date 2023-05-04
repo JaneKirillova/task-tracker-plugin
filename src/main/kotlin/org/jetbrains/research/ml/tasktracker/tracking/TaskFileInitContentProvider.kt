@@ -8,8 +8,9 @@ object TaskFileInitContentProvider {
 
     fun getLanguageFolderRelativePath(language: Language, task: Task): String {
 //        return "${PLUGIN_FOLDER}/${language.name.toLowerCase()}"
-        if (task.key <= 1) return "src/main/java/com/example/avl"
-        return "src/main/java/com/example/treap"
+        return if (task.key <= 1) "src/main/java/com/example/avl"
+        else if (task.key <= 3) "src/main/java/com/example/treap"
+        else "src/main/java/com/example"
     }
 
     private fun getTaskComment(task: Task, language: Language): String {
@@ -34,8 +35,10 @@ object TaskFileInitContentProvider {
     private fun getClassNameByTask(task: Task): String {
         return if (task.key <= 1) {
             "AVL"
-        } else {
+        } else if (task.key <= 3) {
             "Treap"
+        } else {
+            "TrieImpl"
         }
     }
 
@@ -53,13 +56,15 @@ object TaskFileInitContentProvider {
             //TODO: print condition at not only jupyter
             Language.JUPYTER -> {
                 //Mongoose database does not allow to store keys with dots
-                task.description.toString().replace("___",".")
+                task.description.toString().replace("___", ".")
             }
+
             Language.JAVA -> task.description
             Language.KOTLIN -> comment +
                     "fun main() {\n" +
                     "    // Write tour code here\n" +
                     "}"
+
             Language.CPP -> "$comment#include <iostream>\n" +
                     "\n" +
                     "int main() \n" +
@@ -67,6 +72,7 @@ object TaskFileInitContentProvider {
                     "    // Write your code here\n" +
                     "    return 0; \n" +
                     "}"
+
             Language.PYTHON -> "$comment# Write your code here"
         }
     }
